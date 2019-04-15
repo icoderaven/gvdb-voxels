@@ -467,14 +467,17 @@ void Allocator::AllocateAtlasMemGPU(DataPtr& p, uchar dtype, Vector3DI res, bool
       // Allocate new linear memory according to the size required
 	  // printf("Allocating device memory of size %u bytes\n", p.size);
       cudaCheck(cuMemAlloc(&p.gpu, p.size), "Allocator", "AllocateAtlasMemGPU", "cuMemAlloc", "", mbDebug);
+      // Set channel to init_val
+      // TODO: Deal with other data types other than floats
+      // reinterpret_cast required because of function signature
+      cudaCheck(cuMemsetD32(p.gpu, reinterpret_cast<int&>(init_val.x), p.size / sizeof(float)), "Allocator", "AllocateAtlasMemGPU", "cuMemset", "", mbDebug);
       if (preserve > 0 && old_array != 0) {
-        // Set channel to init_val
-				// TODO: Deal with other data types other than floats
-				cudaCheck(cuMemsetD32(p.gpu, init_val.x, p.size/sizeof(float)), "Allocator", "AllocateAtlasMemGPU", "cuMemset", "", mbDebug);
-
         // Copy over preserved data
-        if (preserve>0 && preserve < res.x * res.y * res.z)
-          cudaCheck(cuMemcpyDtoD(p.gpu, old_array, preserve), "Allocator", "AllocateAtlasMemGPU", "cuMemcpyDtoD", "preserve", mbDebug);
+        if (preserve > p.size) {
+          printf("!!!!Preserving only %lu memory out of %lu bytes requested because of allocation limits!!!\n", p.size, preserve);
+          preserve = p.size;
+        }
+        cudaCheck(cuMemcpyDtoD(p.gpu, old_array, preserve), "Allocator", "AllocateAtlasMemGPU", "cuMemcpyDtoD", "preserve", mbDebug);
       }
     } else {
       p.gpu = 0;
@@ -878,7 +881,7 @@ void Allocator::AtlasFill ( uchar chan )
 	}
 	else{
 		// TODO: Deal with non float init vals.
-		cudaCheck( cuMemsetD32(mAtlas[chan].gpu, mAtlasInitVal[chan].x, mAtlas[chan].size/sizeof(float)), "Allocator", "AtlasCommitFromCPU", "cuMemset", "", mbDebug);
+		cudaCheck( cuMemsetD32(mAtlas[chan].gpu, reinterpret_cast<int&>(mAtlasInitVal[chan].x), mAtlas[chan].size/sizeof(float)), "Allocator", "AtlasCommitFromCPU", "cuMemset", "", mbDebug);
 	}
 }
 

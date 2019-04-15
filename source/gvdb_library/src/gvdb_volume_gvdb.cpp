@@ -4671,7 +4671,7 @@ void VolumeGVDB::PrepareRender ( int w, int h, char shading )
 		gerror();
 	}
 	// Depth buffer
-	mScnInfo.outbuf		= -1;			// NOT USED  (was mRenderBuf[0].gpu;)
+	// mScnInfo.outbuf		= (getScene()->getBuf())-1;			// NOT USED  (was mRenderBuf[0].gpu;)
 	int dbuf = getScene()->getDepthBuf();
 	mScnInfo.dbuf 		= (dbuf == 255 ? NULL : mRenderBuf[dbuf].gpu);	
 	mScnInfo.dir_vec	= cam->dir_vec;

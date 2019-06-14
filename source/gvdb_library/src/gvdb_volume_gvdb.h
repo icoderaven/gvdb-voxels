@@ -346,7 +346,8 @@
 	
 	class GVDB_API VolumeGVDB : public VolumeBase {
 	public:
-			VolumeGVDB ();			
+			VolumeGVDB ();		
+			~VolumeGVDB();	
 			
 			// Setup
 			void SetCudaDevice ( int devid, CUcontext ctx=NULL );
@@ -507,6 +508,7 @@
 			int  getAtlasGLID ( int chan )	{ return mPool->getAtlasGLID ( chan ); }
 			int  getVDBSize ()				{ return sizeof(mVDBInfo); }
 			char* getVDBInfo ()				{ return (char*) &mVDBInfo; }
+			char* getcuVDBInfo ()				{ return (char*) &cuVDBInfo; }
 			int  getScnSize()				{ return sizeof(mScnInfo); }
 			char* getScnInfo()				{ return (char*) &mScnInfo; }			
 

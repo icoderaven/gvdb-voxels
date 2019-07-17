@@ -2593,7 +2593,13 @@ VolumeGVDB::~VolumeGVDB(){
 		cudaCheck(cuMemFree(cuVDBInfo), "VolumeGVDB", "Destructor", "cuMemFree", "cuVDBInfo", mbDebug);
 	}
 	if(mTransferPtr.gpu!= 0x0){
-		cudaCheck(cuMemFree(mTransferPtr.gpu), "VolumeGVDB", "Destructor", "cuMemFree", "cuVDBInfo", mbDebug);
+		cudaCheck(cuMemFree(mTransferPtr.gpu), "VolumeGVDB", "Destructor", "cuMemFree", "mTransferPtr", mbDebug);
+	}
+	// Also deallocate the cached scenes
+	for(int i=0; i<mCachedScnInfo.size(); ++i){
+		if(mCachedScnInfo[i] != 0x0){
+			cudaCheck(cuMemFree(mCachedScnInfo[i]), "VolumeGVDB", "Destructor", "cuMemFree", "mCachedScnInfo", mbDebug);
+		}
 	}
 	CUDPPResult result = CUDPP_SUCCESS;
 	result = cudppDestroyPlan(mPlan_max);
@@ -4717,6 +4723,49 @@ void VolumeGVDB::RenderKernel ( CUfunction user_kernel, uchar chan, uchar rbuf )
 
 	// Send VDB Info & Atlas
 	PrepareVDB ();												
+
+	// Run CUDA User-Kernel
+	Vector3DI block ( 8, 8, 1 );
+	Vector3DI grid ( int(width/block.x)+1, int(height/block.y)+1, 1);		
+	void* args[3] = { &cuVDBInfo,  &chan, &mRenderBuf[rbuf].gpu };
+	cudaCheck ( cuLaunchKernel ( user_kernel, grid.x, grid.y, 1, block.x, block.y, 1, 0, NULL, args, NULL ), "VolumeGVDB", "RenderKernel", "cuLaunch", "(user kernel)", mbDebug);
+	
+	if (mbProfile) PERF_POP ();
+
+	POP_CTX
+}
+
+void VolumeGVDB::CacheScene(){
+	PUSH_CTX
+	// Create a GPU pointer for this
+	CUdeviceptr gpu_scn_ptr;
+	cudaCheck(cuMemAlloc(&gpu_scn_ptr, sizeof(ScnInfo)), "VolumeGVDB", "CacheScene", "cuMemAlloc", "", false);
+	int width = mRenderBuf[0].stride;
+	int height = mRenderBuf[0].max / width;	
+	PrepareRender ( width, height, getScene()->getShading() );
+	// Copy over scene data to this pointer
+	cudaCheck(cuMemcpyDtoD(gpu_scn_ptr, cuScnInfo, sizeof(ScnInfo)), "VolumeGVDB", "CacheScene", "cuMemcpyDtoD",
+              "scene", false);
+	// Add to mCachedScnInfo
+	mCachedScnInfo.push_back(gpu_scn_ptr);
+	POP_CTX
+}
+
+// Render custom user kernel at cached scene
+void VolumeGVDB::RenderKernelAtCachedScene(CUfunction user_kernel, uchar chan, uchar rbuf, int scene_id )
+{
+	PUSH_CTX
+
+	if (mbProfile) PERF_PUSH ( "Render" );
+	
+	int width = mRenderBuf[rbuf].stride;
+	int height = mRenderBuf[rbuf].max / width;	
+
+	// Copy scn data to global pointer from cached GPU ScnInfo pointer
+	cudaCheck( cuMemcpyDtoD(cuScnInfo, mCachedScnInfo[scene_id], sizeof(ScnInfo)), "VolumeGVDB", "RenderKernelAtCachedScene", "cuMemcpyDtoD", "cuScnInfo", mbDebug);
+
+	// Send VDB Info & Atlas
+	PrepareVDB ();											
 
 	// Run CUDA User-Kernel
 	Vector3DI block ( 8, 8, 1 );

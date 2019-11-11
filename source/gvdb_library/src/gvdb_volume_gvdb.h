@@ -517,14 +517,14 @@
 			// Data Operations
 			void CleanAux(int id);
 			void CleanAux();
-			void PrepareAux ( int id, int cnt, int stride, bool bZero, bool bCPU=false );
+			void PrepareAux ( int id, size_t cnt, int stride, bool bZero, bool bCPU=false );
 			void PrepareV3D ( Vector3DI ires, uchar dtype );
-			void AllocData ( DataPtr& ptr, int cnt, int stride, bool bCPU=true );
+			void AllocData ( DataPtr& ptr, uint64 cnt, int stride, bool bCPU=true );
 			void RetrieveData ( DataPtr ptr );			
 			void CommitData ( DataPtr ptr );			
-			void CommitData ( DataPtr& ptr, int cnt, char* cptr, int offs, int stride );
-			void SetDataCPU ( DataPtr& dat, int cnt, char* cptr, int offs, int stride );	
-			void SetDataGPU ( DataPtr& dat, int cnt, CUdeviceptr gptr, int offs, int stride );
+			void CommitData ( DataPtr& ptr, uint64 cnt, char* cptr, int offs, int stride );
+			void SetDataCPU ( DataPtr& dat, uint64 cnt, char* cptr, int offs, int stride );	
+			void SetDataGPU ( DataPtr& dat, uint64 cnt, CUdeviceptr gptr, int offs, int stride );
 			char* getDataCPU ( DataPtr ptr, int n, int stride );
 			void PrefixSum ( CUdeviceptr outArray, CUdeviceptr inArray, int numElements );
 			void SetPoints ( DataPtr& pntpos, DataPtr& pntvel, DataPtr& clrpos );
@@ -565,7 +565,7 @@
 			void CommitTransferFunc ();
 			void TimerStart ();
 			float TimerStop ();
-			void CheckData ( std::string msg, CUdeviceptr ptr, int dt, int stride, int cnt );
+			void CheckData ( std::string msg, CUdeviceptr ptr, int dt, int stride, size_t cnt );
 
 			// VDB Access
 			bool isOn (slong nodeid, uint32 n );

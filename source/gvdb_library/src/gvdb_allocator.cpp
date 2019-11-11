@@ -266,12 +266,12 @@ int	Allocator::getSize ( uchar dtype )
 	return 0;
 }
 
-void Allocator::CreateMemLinear ( DataPtr& p, char* dat, int sz )
+void Allocator::CreateMemLinear ( DataPtr& p, char* dat, uint64 sz )
 {
 	CreateMemLinear ( p, dat, 1, sz, false );
 }
 
-void Allocator::CreateMemLinear ( DataPtr& p, char* dat, int stride, int cnt, bool bCPU, bool bAllocHost )
+void Allocator::CreateMemLinear ( DataPtr& p, char* dat, int stride, uint64 cnt, bool bCPU, bool bAllocHost )
 {
 	//std::cout << p.lastEle << std::endl;
 	p.alloc = this;

@@ -137,8 +137,8 @@
 		void	AtlasRead ( FILE* fp, uchar chan, uint64 asize );
 
 		//void	CreateImage ( DataPtr& p, nvImg& img );
-		void	CreateMemLinear ( DataPtr& p, char* dat, int sz );
-		void	CreateMemLinear ( DataPtr& p, char* dat, int stride, int cnt, bool bCPU, bool bAllocHost = false  );
+		void	CreateMemLinear ( DataPtr& p, char* dat, uint64 sz );
+		void	CreateMemLinear ( DataPtr& p, char* dat, int stride, uint64 cnt, bool bCPU, bool bAllocHost = false  );
 		void    FreeMemLinear ( DataPtr& p );
 		void    RetrieveMem ( DataPtr& p);
 		void    CommitMem ( DataPtr& p);

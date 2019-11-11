@@ -367,7 +367,7 @@ void VolumeGVDB::SetModule ( CUmodule module )
 	POP_CTX
 }
 
-float* ConvertToScalar ( int cnt, float* inbuf, float* outbuf, float& vmin, float& vmax )
+float* ConvertToScalar ( size_t cnt, float* inbuf, float* outbuf, float& vmin, float& vmax )
 {
 	float* outv = outbuf;
 	Vector3DF* vec = (Vector3DF*) inbuf;	
@@ -3702,7 +3702,7 @@ int VolumeGVDB::ActivateRegion ( int lev, Extents& e )
 int VolumeGVDB::ActivateHalo(Extents& e)
 {
 	Vector3DF pos, nbr;
-	int cnt, actv;
+	size_t cnt, actv;
 
 	// tag buffer
 	int sz = e.ires.x*e.ires.y*e.ires.z * sizeof(uchar);
@@ -3783,7 +3783,7 @@ int VolumeGVDB::ActivateRegionFromAux (Extents& e, int auxid, uchar dt, float vt
 }
 
 // Check data returned from GPU
-void VolumeGVDB::CheckData ( std::string msg, CUdeviceptr ptr, int dt, int stride, int cnt )
+void VolumeGVDB::CheckData ( std::string msg, CUdeviceptr ptr, int dt, int stride, size_t cnt )
 {
 	PUSH_CTX
 
@@ -5201,7 +5201,7 @@ void VolumeGVDB::PrefixSum ( CUdeviceptr inArray, CUdeviceptr outArray, int numE
 	POP_CTX
 }
 
-void VolumeGVDB::AllocData ( DataPtr& ptr, int cnt, int stride, bool bCPU )
+void VolumeGVDB::AllocData ( DataPtr& ptr, uint64 cnt, int stride, bool bCPU )
 {
 	PUSH_CTX
 	if ( (ptr.cpu == 0 && bCPU) || ptr.gpu==0 || cnt > ptr.max || stride != ptr.stride )
@@ -5216,7 +5216,7 @@ void VolumeGVDB::CommitData ( DataPtr ptr )
 	PERF_POP ();
 	POP_CTX
 }
-void VolumeGVDB::CommitData ( DataPtr& dat, int cnt, char* cpubuf, int offs, int stride )
+void VolumeGVDB::CommitData ( DataPtr& dat, uint64 cnt, char* cpubuf, int offs, int stride )
 {
 	dat.cpu = cpubuf;
 	dat.usedNum = cnt;
@@ -5237,7 +5237,7 @@ void VolumeGVDB::CommitData ( DataPtr& dat, int cnt, char* cpubuf, int offs, int
 	PERF_POP ();
 	POP_CTX
 }
-void VolumeGVDB::SetDataCPU ( DataPtr& dat, int cnt, char* cptr, int offs, int stride )
+void VolumeGVDB::SetDataCPU ( DataPtr& dat, size_t cnt, char* cptr, int offs, int stride )
 {
 	dat.usedNum = cnt;
 	dat.lastEle = cnt;
@@ -5246,7 +5246,7 @@ void VolumeGVDB::SetDataCPU ( DataPtr& dat, int cnt, char* cptr, int offs, int s
 	dat.stride = stride;
 	dat.subdim.Set ( offs, stride, 0 );
 }
-void VolumeGVDB::SetDataGPU ( DataPtr& dat, int cnt, CUdeviceptr gptr, int offs, int stride )
+void VolumeGVDB::SetDataGPU ( DataPtr& dat, size_t cnt, CUdeviceptr gptr, int offs, int stride )
 {
 	dat.lastEle = cnt;
 	dat.usedNum = cnt;
@@ -5331,7 +5331,7 @@ void VolumeGVDB::CleanAux(int id)
 	POP_CTX
 }
 
-void VolumeGVDB::PrepareAux ( int id, int cnt, int stride, bool bZero, bool bCPU )
+void VolumeGVDB::PrepareAux ( int id, size_t cnt, int stride, bool bZero, bool bCPU )
 {
 	PUSH_CTX
 	if ( mAux[id].lastEle < cnt || mAux[id].stride != stride ) {

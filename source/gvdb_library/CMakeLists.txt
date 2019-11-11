@@ -22,23 +22,26 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CudaAutodetectCompute.cmake)
 include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/src")
 _add_project_definitions(${PROJNAME})
 
+set(CMAKE_CXX_FLAGS
+    "${CMAKE_CXX_FLAGS} -Wno-write-strings -Wno-unused-result")
+
 #####################################################################################
 # GVDB Options
 #
 set ( USE_BITMASKS OFF CACHE BOOL "Use Bitmasks" )
-if ( USE_BITMASKS ) 
+if ( USE_BITMASKS )
    add_definitions(-DUSE_BITMASKS)
 endif()
 
 set ( USE_SIMULATION OFF CACHE BOOL "Use GVDB 2.0 Simulation" )
-if ( USE_SIMULATION ) 
+if ( USE_SIMULATION )
    add_definitions(-DSIM_CODE)
 endif()
 
 set ( USE_OPENVDB OFF CACHE BOOL "Use OpenVDB" FORCE)
 
 set ( USE_NVTX OFF CACHE BOOL "Use NSIGHT Markers" )
-if ( USE_NVTX ) 
+if ( USE_NVTX )
    add_definitions(-DUSE_NVTX)
 endif()
 

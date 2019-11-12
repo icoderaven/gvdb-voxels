@@ -1,0 +1,3 @@
+[submodule "source/gvdb_library/shared_cudpp"]
+	path = source/gvdb_library/shared_cudpp
+	url = https://github.com/icoderaven/cudpp.git

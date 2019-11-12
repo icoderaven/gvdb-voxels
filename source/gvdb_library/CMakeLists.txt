@@ -19,7 +19,6 @@ include ( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Packages.cmake" )
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CudaComputeTargetFlags.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CudaAutodetectCompute.cmake)
 
-include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/src")
 _add_project_definitions(${PROJNAME})
 
 set(CMAKE_CXX_FLAGS
@@ -53,13 +52,33 @@ _add_package_CUDA()
 #####################################################################################
 # Add CUDPP Library
 #
-_add_package_CUDPP()
+# Auto pull submodule if repository was not pulled using --recursive
+find_package(Git QUIET)
+if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
+# Update submodules as needed
+    option(GIT_SUBMODULE "Check submodules during build" ON)
+    if(GIT_SUBMODULE)
+        message(STATUS "Submodule update")
+        execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
+                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                        RESULT_VARIABLE GIT_SUBMOD_RESULT)
+        if(NOT GIT_SUBMOD_RESULT EQUAL "0")
+            message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
+        endif()
+    endif()
+endif()
+
+if(NOT EXISTS "${PROJECT_SOURCE_DIR}/shared_cudpp/CMakeLists.txt")
+    message(FATAL_ERROR "cudpp was not downloaded! GIT_SUBMODULE was turned off or failed. Please update submodules and try again.")
+endif()
+
+add_subdirectory(shared_cudpp)
 
 #####################################################################################
 # Add OPENVDB Library (optional)
 #
 _add_package_OpenVDB()
- 
+
 #####################################################################################
 # Source files for this project
 #
@@ -152,6 +171,11 @@ set_target_properties( ${PROJNAME} PROPERTIES VS_INTERMEDIATE_DIRECTORY_RELEASE 
 set_target_properties( ${PROJNAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${LIB_OUTPUT_PATH} )
 set_target_properties( ${PROJNAME} PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
 
+target_link_libraries(${PROJNAME} PUBLIC cudpp)
+target_include_directories( ${PROJNAME} PUBLIC
+$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+$<INSTALL_INTERFACE:${INCLUDE_PATH}>)
+
 message ( STATUS "Build:   ${LIB_OUTPUT_PATH}" )
 message ( STATUS "Lib:     ${LIB_INSTALL_PATH}" )
 message ( STATUS "Inc:     ${INCLUDE_PATH}" )
@@ -160,7 +184,7 @@ message ( STATUS "Share:   ${SHARE_PATH}" )
 #####################################################################################
 # Linkage
 #
-_LINK ( PROJECT ${PROJNAME} OPT ${LIBRARIES_OPTIMIZED} DEBUG ${LIBRARIES_DEBUG} PLATFORM ${PLATFORM_LIBRARIES} )
+# _LINK ( PROJECT ${PROJNAME} OPT ${LIBRARIES_OPTIMIZED} DEBUG ${LIBRARIES_DEBUG} PLATFORM ${PLATFORM_LIBRARIES} )
 
 ################################################################
 # Windows specific
@@ -202,11 +226,9 @@ _INSTALL_PTX ( FILES ${CUDA_PTX_PATHS} DESTINATION ${EXECUTABLE_OUTPUT_PATH} OUT
 install ( FILES ${HEADER_FILES} DESTINATION ${INCLUDE_PATH} )
 install ( FILES ${CUH_FILES} DESTINATION ${INCLUDE_PATH} )
 install ( FILES ${INSTALL_LIST} DESTINATION ${LIB_INSTALL_PATH} )
-install ( TARGETS ${PROJNAME} DESTINATION ${LIB_INSTALL_PATH} )
-
+install ( TARGETS ${PROJNAME} DESTINATION ${LIB_INSTALL_PATH} EXPORT ${PROJNAME}-targets )
+install ( EXPORT ${PROJNAME}-targets DESTINATION lib/cmake)
 #################################
 # Done
 message ( STATUS "\nGVDB INSTALL PATH: ${CMAKE_INSTALL_PREFIX}" )
 message ( STATUS "GVDB will be installed to this path post-build (win32) or during make install (linux)")
-
-

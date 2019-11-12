@@ -6,13 +6,9 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 find_package(CUDA REQUIRED)
 
-set(GVDB_ROOT_DIR "~/packages/gvdb2/install")
-find_package(GVDB REQUIRED)
-include_directories(${GVDB_INCLUDE_DIRS})
-
-if ( NOT DEFINED ASSET_PATH ) 
+if ( NOT DEFINED ASSET_PATH )
   get_filename_component ( _assets "${CMAKE_CURRENT_SOURCE_DIR}/../shared_assets" REALPATH )
-  set ( ASSET_PATH ${_assets} CACHE PATH "Full path to gvdb/shared_assets/" ) 
+  set ( ASSET_PATH ${_assets} CACHE PATH "Full path to gvdb/shared_assets/" )
 endif()
 
 option(GVDB_UTILS_BUILD_SHARED_LIBS "Build Shared Library for dynamic linking" TRUE)
@@ -20,8 +16,6 @@ option(REQUIRE_NVGUI "Build NVGUI" TRUE)
 option(REQUIRE_CAM "Build CAM" TRUE)
 option(REQUIRE_VEC "Build VEC" TRUE)
 option(REQUIRE_OPTIX "Build OPTIX" FALSE)
-
-
 
 if(GVDB_UTILS_BUILD_SHARED_LIBS)
   # User wants to build Dynamic Libraries, so change the LIB_TYPE variable to CMake keyword 'SHARED'
@@ -110,10 +104,9 @@ cuda_add_library(gvdb_utils
                  ${VERBOSE_PTXAS})
 # Add as target definition so that it carries through to packages that import this package
 target_compile_definitions(gvdb_utils PUBLIC ASSET_PATH="${ASSET_PATH}/" USE_GVDB=1)
-target_link_libraries(gvdb_utils ${GVDB_LIBRARIES} ${OPENGL_LIBRARY})
+target_link_libraries(gvdb_utils gvdb ${OPENGL_LIBRARY})
 set_target_properties(gvdb_utils PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 install(FILES ${UTIL_HEADER_FILES} DESTINATION include)
 install(TARGETS gvdb_utils DESTINATION lib EXPORT gvdb_utils-targets)
-
 install(EXPORT gvdb_utils-targets DESTINATION lib/cmake)

@@ -13,4 +13,4 @@ if(@GVDB_BUILD_SAMPLE_UTILS@)
 endif()
 
 set(gvdb_LIBRARIES gvdb)
-# set(gvdb_INCLUDE_DIRS @HEADER_FILES@)
+set(gvdb_INCLUDE_DIRS @CMAKE_INSTALL_PREFIX@/include)

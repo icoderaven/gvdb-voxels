@@ -53,8 +53,8 @@ _add_package_CUDA()
 # Add CUDPP Library
 #
 # Auto pull submodule if repository was not pulled using --recursive
-find_package(Git QUIET)
-if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
+find_package(Git REQUIRED)
+if(GIT_FOUND)
 # Update submodules as needed
     option(GIT_SUBMODULE "Check submodules during build" ON)
     if(GIT_SUBMODULE)
@@ -147,6 +147,7 @@ OPTION (BUILD_SHARED_LIBS "Build Shared Libraries" ON)
 set (LIB_TYPE STATIC)
 if (BUILD_SHARED_LIBS)
   set (LIB_TYPE SHARED)
+  SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 endif()
 
 # Build with OpenGL

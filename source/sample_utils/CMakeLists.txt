@@ -93,6 +93,7 @@ endif()
 if(GVDB_UTILS_BUILD_SHARED_LIBS)
   message(STATUS "Set export shared library.")
   add_definitions(-Dgvdb_utils_EXPORTS)
+  SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 endif()
 
 cuda_add_library(gvdb_utils

@@ -100,7 +100,7 @@ if ( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
    else()
       get_filename_component ( _instpath "/usr/local/gvdb" REALPATH )
    endif()
-   set ( CMAKE_INSTALL_PREFIX ${_instpath} CACHE PATH "default install path" FORCE)   
+   set ( CMAKE_INSTALL_PREFIX ${_instpath} CACHE PATH "default install path" FORCE)
 endif()
 
 get_filename_component( LIB_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR} REALPATH)
@@ -142,6 +142,10 @@ list( APPEND ALL_SOURCE_FILES ${PACKAGE_SOURCE_FILES} )
 # Definitions
 add_definitions(-DGVDB_EXPORTS)					# Export dll symbols
 
+add_definitions(-DCUDA_GVDB_MODULE_PATH="${LIB_INSTALL_PATH}")
+message ( STATUS "CUDA_GVDB_MODULE_PATH: ${LIB_INSTALL_PATH}" )
+
+
 # Set the library type
 OPTION (BUILD_SHARED_LIBS "Build Shared Libraries" ON)
 set (LIB_TYPE STATIC)
@@ -172,10 +176,9 @@ set_target_properties( ${PROJNAME} PROPERTIES VS_INTERMEDIATE_DIRECTORY_RELEASE 
 set_target_properties( ${PROJNAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${LIB_OUTPUT_PATH} )
 set_target_properties( ${PROJNAME} PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-target_link_libraries(${PROJNAME} PUBLIC cudpp)
+target_link_libraries(${PROJNAME} PUBLIC cudpp ${CUDA_CUDA_LIBRARY} ${CUDA_CUDART_LIBRARY})
 target_include_directories( ${PROJNAME} PUBLIC
-$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
-$<INSTALL_INTERFACE:${INCLUDE_PATH}>)
+"$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src;${CUDA_TOOLKIT_INCLUDE}>")
 
 message ( STATUS "Build:   ${LIB_OUTPUT_PATH}" )
 message ( STATUS "Lib:     ${LIB_INSTALL_PATH}" )

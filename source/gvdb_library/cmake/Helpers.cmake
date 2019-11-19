@@ -82,7 +82,7 @@ FUNCTION( _COMPILEPTX )
         set( compile_target_ptx "${input_without_ext}_PTX")
         set( custom_command_var "${input_without_ext}_OUTPUT")
         # compile ptx
-        cuda_compile_ptx(custom_command_var ${input})
+        cuda_compile_ptx(custom_command_var ${input} OPTIONS "${DEBUG_FLAGS}")
         # This will only configure file generation, we need to add a target to
         # generate a file cuda_generated_<counter>_${input_without_ext}.ptx
         # Add custom command to rename to simply ${input_without_ext}.ptx
@@ -161,25 +161,19 @@ function( _INSTALL_PTX )
   	add_custom_command ( TARGET ${PROJNAME} POST_BUILD
           COMMAND ${CMAKE_COMMAND} -E copy  ${_file} ${_fixed}
         )
-	list ( APPEND PTX_FIXED ${_file} )     # NOTE: Input of FILES must be list of ptx *with paths*	
+	list ( APPEND PTX_FIXED ${_file} )     # NOTE: Input of FILES must be list of ptx *with paths*
 	list ( APPEND OUT_LIST ${_fixed} )
     endforeach()
 
   else()
 
     foreach ( _file IN ITEMS ${_INSTALL_PTX_FILES} )
-      get_filename_component ( _ptxpath ${_file} DIRECTORY )
-      get_filename_component ( _ptxbase ${_file} NAME_WE )
-      get_filename_component ( _ptxparent ${_ptxpath} DIRECTORY )    # parent directory
-      set ( _fixed "${_ptxparent}/${_ptxbase}.ptx" )
-      add_custom_command ( TARGET ${PROJNAME} PRE_LINK
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different  ${_file} ${_fixed}
-        )      
+      set ( _fixed "${_file}" )
       list ( APPEND PTX_FIXED ${_fixed} )
       list ( APPEND OUT_LIST ${_fixed} )
     endforeach()
   endif()
-  
+
   # Install PTX
   message ( STATUS "PTX files: ${PTX_FIXED}" )
   _INSTALL ( FILES ${PTX_FIXED} DESTINATION ${_INSTALL_PTX_DESTINATION} )

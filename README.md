@@ -127,55 +127,25 @@ OptiX 3.9.0 or later (InteractivOptix sample only, download from NVIDIA)
   7. OptiX is distributed as a .sh file, which extracts itself in a desired directory. (Here ~/packages/optix)
 
 ### Set up build environment
-8. Clone the repository/unpack the source compressed file into a local directory (Here ~/packages/gvdb)
+  8. Clone the repository/unpack the source compressed file into a local directory (Here ~/packages/gvdb)
   9. Create a build directory
   ```
   mkdir -P ~/packages/gvdb/build && cd ~/packages/gvdb/build
   ```
-### Build cuDPP Library
-  10. Create a build directory for cudpp
-  ```
-  mkdir shared_cudpp && cd shared_cudpp
-  ```
-11. Configure cudpp and install to local install directory (since the CMakeLists is currently wonky)
-  ```
-  cmake -DCUDA_SDK_ROOT_DIR=/usr/local/cuda-9.2/samples -DCMAKE_BUILD_TYPE=Release ../../source/shared_cudpp/ -DCMAKE_INSTALL_PREFIX=./install
+### Configure!
+  10. Set the directory where you've installed the CUDA SDK
+```
+cmake -DCUDA_SDK_ROOT_DIR=/usr/local/cuda-9.2/samples -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../install ../source/
+```
+This will also additionally pull cudpp and its submodules as part of the configure process.
 
-  make install
+### Optionally Configure sample(s)
+  11. If building samples, set the option BUILD_SAMPLES to be ON. Suggest using `ccmake .` to graphically enable the samples to be built. Currently only updated gInteractiveGL to correctly build and link.
   ```
-  12. Copy over the include files for cudpp since the CMakeLists isn't correctly configured right now
+  cmake -DCUDA_SDK_ROOT_DIR=/usr/local/cuda-9.2/samples -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../install -DGVDB_BUILD_SAMPLES=ON -DBUILD_gInteractiveGL=ON ../source/
   ```
-  cp -r ../../source/shared_cudpp/include/ ./
-  ```
-
-### Build GVDB Library
-  13. Create a build directory for gvdb_library
-  ```
-  cd .. && mkdir gvdb_library && cd gvdb_library
-  ```
-  14. Invoke cmake to generate config files (Using the appropriate CUDA version) and pointing to above build/install of shared_cudpp, and installing the library in a new root level install directory
-  ```
-  cmake -DCUDA_SDK_ROOT_DIR=/usr/local/cuda-9.2/samples -DCMAKE_BUILD_TYPE=Release ~/packages/gvdb/source/gvdb_library  -DCUDPP_ROOT_DIR=~/packages/gvdb/build/shared_cudpp -DCMAKE_INSTALL_PREFIX=../../install
-
-  make install
-  ```
-
-### Build sample(s)
-15. Follow a similar procedure for creating build directories for samples. The appropriate cmake command looks like (an additional command pointing to the extracted optix directory is needed for samples that use optix)
-  ```
-  cmake -DCUDA_SDK_ROOT_DIR=/usr/local/cuda-9.2/samples -DCMAKE_BUILD_TYPE=Release ~/packages/gvdb/source/gFluidSurface/  -DCUDPP_ROOT_DIR=~/packages/gvdb/build/shared_cudpp -DGVDB_ROOT_DIR=~/packages/gvdb/install -DCMAKE_INSTALL_PREFIX=~/packages/gvdb/install -DOPTIX_ROOT_DIR=~/packages/optix
-  ```
-### Running the samples
-  16. Set LD_LIBRARY_PATH
-  ```
-  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/packages/gvdb/install/bin:~/packages/optix/SDK-precompiled-samples
-  ```
-
-  17. Run the sample!
-  ```
-  cd ~/packages/gvdb/install/bin
-  ./gDepthMap
-  ```
+### Run the sample!
+  12. Samples should all be built in the ../install/bin directory. No need to preload LD_LIBRARY_PATH since the libraries are installed with the correct RPATH.
 
 
 ## License

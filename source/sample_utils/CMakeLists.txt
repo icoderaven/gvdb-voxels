@@ -99,7 +99,6 @@ endif()
 cuda_add_library(gvdb_utils
                  ${LIB_TYPE}
                  ${UTIL_SOURCE_FILES}
-                 ${UTIL_HEADER_FILES}
                  OPTIONS
                  ${GENCODE}
                  ${VERBOSE_PTXAS})
@@ -107,6 +106,9 @@ cuda_add_library(gvdb_utils
 target_compile_definitions(gvdb_utils PUBLIC ASSET_PATH="${ASSET_PATH}/" USE_GVDB=1)
 target_link_libraries(gvdb_utils gvdb ${OPENGL_LIBRARY})
 set_target_properties(gvdb_utils PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
+target_include_directories(gvdb_utils PUBLIC
+    "$<BUILD_INTERFACE:${SAMPLE_UTIL_DIR}>"
+    )
 
 install(FILES ${UTIL_HEADER_FILES} DESTINATION include)
 install(TARGETS gvdb_utils DESTINATION lib EXPORT gvdb_utils-targets)

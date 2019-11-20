@@ -128,6 +128,12 @@ elseif(UNIX)
                 ${X11_LIBRARIES})
 endif()
 
+# Set optional depth buffer test
+OPTION(SKIP_DEPTH_BUFFER_TEST "Skip depth buffer test in raycast" OFF)
+if(SKIP_DEPTH_BUFFER_TEST)
+  add_definitions(-DGVDB_SKIP_DEPTH_BUFFER_TEST)
+endif()
+
 macro(_gvdb_find variable path)
     if(NOT ${variable})
         file(GLOB _FOUND_FILES ${path})

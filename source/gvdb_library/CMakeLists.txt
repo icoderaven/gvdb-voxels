@@ -145,6 +145,11 @@ add_definitions(-DGVDB_EXPORTS)					# Export dll symbols
 add_definitions(-DCUDA_GVDB_MODULE_PATH="${LIB_INSTALL_PATH}")
 message ( STATUS "CUDA_GVDB_MODULE_PATH: ${LIB_INSTALL_PATH}" )
 
+# Set optional depth buffer test
+OPTION(SKIP_DEPTH_BUFFER_TEST "Skip depth buffer test in raycast" OFF)
+if(SKIP_DEPTH_BUFFER_TEST)
+  add_definitions(-DGVDB_SKIP_DEPTH_BUFFER_TEST)
+endif()
 
 # Set the library type
 OPTION (BUILD_SHARED_LIBS "Build Shared Libraries" ON)

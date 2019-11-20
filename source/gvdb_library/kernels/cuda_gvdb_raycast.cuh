@@ -525,13 +525,15 @@ __device__ void rayCast ( VDBInfo* gvdb, uchar chan, float3 pos, float3 dir, flo
 		NEXT_DDA
 
 		// depth buffer test [optional]
-		if (SCN_DBUF != 0x0) {
-			float dist = t.x * fabsf(dot(scn.dir_vec, normalize(dir)));
-			if (dist > getLinearDepth(SCN_DBUF) ) {
-				hit.z = 0;
-				return;
+		#ifndef GVDB_SKIP_DEPTH_BUFFER_TEST
+			if (SCN_DBUF != 0x0) {
+				float dist = t.x * fabsf(dot(scn.dir_vec, normalize(dir)));
+				if (dist > getLinearDepth(SCN_DBUF) ) {
+					hit.z = 0;
+					return;
+				}
 			}
-		}
+		#endif
 
 		// node active test
 		b = (((int(p.z) << gvdb->dim[lev]) + int(p.y)) << gvdb->dim[lev]) + int(p.x);	// bitmaskpos

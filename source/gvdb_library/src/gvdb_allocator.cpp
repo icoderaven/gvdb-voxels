@@ -636,12 +636,12 @@ bool Allocator::AtlasResize ( uchar chan, int cx, int cy, int cz)
 
 	// Atlas		
 	if(mAtlasTexMem[chan]){
-		AllocateTextureGPU ( p, p.type, axisres, (p.glid!=-1), 0 );
+		AllocateTextureGPU ( p, p.type, axisres, (p.glid!=-1), 0, mAtlasInitVal[chan]);
 	}
 	else{
-		AllocateAtlasMemGPU( p, p.type, axisres, (p.glid!=-1), 0 );
+		AllocateAtlasMemGPU( p, p.type, axisres, (p.glid!=-1), 0, mAtlasInitVal[chan] );
 	}
-	AllocateTextureCPU ( p, p.size, (p.cpu!=0x0), 0 );
+	AllocateTextureCPU ( p, p.size, (p.cpu!=0x0), 0, mAtlasInitVal[chan] );
 	mAtlas[chan] = p;
 
 	return true;
@@ -708,7 +708,7 @@ bool Allocator::AtlasResize ( uchar chan, uint64 max_leaf )
 	else{
 		AllocateAtlasMemGPU( p, p.type, axisres, (p.glid!=-1), preserve, mAtlasInitVal[chan] );
 	}
-	AllocateTextureCPU ( p, p.size, (p.cpu!=0x0), preserve );
+	AllocateTextureCPU ( p, p.size, (p.cpu!=0x0), preserve,  mAtlasInitVal[chan]);
 	mAtlas[chan] = p;
 
 	return true;

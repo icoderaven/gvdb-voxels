@@ -1059,7 +1059,7 @@ void VolumeGVDB::ActivateExtraBricksGPU(int pNumPnts, float pRadius, Vector3DF p
 	int threads = 512;		
 	int pblks = int(pNumPnts / threads)+1;
 
-	PrepareAux ( AUX_BRICK_LEVXYZ, pNumPnts * pRootLev * 4, sizeof(unsigned short), true );
+	PrepareAux ( AUX_BRICK_LEVXYZ, pNumPnts * pRootLev * 4 * 8, sizeof(unsigned short), true );
 	PrepareAux ( AUX_EXTRA_BRICK_CNT, 1, sizeof(int), true, true);
 
 	PUSH_CTX
@@ -1173,7 +1173,7 @@ void VolumeGVDB::ActivateIncreBricksGPU(int pNumPnts, float pRadius, Vector3DF p
 	int threads = 512;		
 	int pblks = int(pNumPnts / threads)+1;
 
-	PrepareAux ( AUX_BRICK_LEVXYZ, pNumPnts * pRootLev * 4 / Incre_ratio, sizeof(unsigned short), true );
+	PrepareAux ( AUX_BRICK_LEVXYZ, pNumPnts * pRootLev * 4 * 8 / Incre_ratio, sizeof(unsigned short), true );
 	PrepareAux ( AUX_EXTRA_BRICK_CNT, 1, sizeof(int), true, true);
 
 	void* argsCalcExtraLevXYZ[12] = { &cuVDBInfo, &pRadius,
@@ -4737,12 +4737,18 @@ void VolumeGVDB::CacheScene(){
               "scene", false);
 	// Add to mCachedScnInfo
 	mCachedScnInfo.push_back(gpu_scn_ptr);
+	cuCtxSynchronize ();
 	POP_CTX
 }
 
 // Render custom user kernel at cached scene
 void VolumeGVDB::RenderKernelAtCachedScene(CUfunction user_kernel, uchar chan, uchar rbuf, int scene_id )
 {
+	if(scene_id >= mCachedScnInfo.size()){
+		std::cerr<<"Invalid scene_id "<<scene_id;
+		return;
+	}
+
 	PUSH_CTX
 
 	if (mbProfile) PERF_PUSH ( "Render" );

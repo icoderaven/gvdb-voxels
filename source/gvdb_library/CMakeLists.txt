@@ -148,7 +148,15 @@ message ( STATUS "CUDA_GVDB_MODULE_PATH: ${LIB_INSTALL_PATH}" )
 # Set optional depth buffer test
 OPTION(SKIP_DEPTH_BUFFER_TEST "Skip depth buffer test in raycast" OFF)
 if(SKIP_DEPTH_BUFFER_TEST)
+  message( STATUS "Skipping depth buffer test in raycast")
   add_definitions(-DGVDB_SKIP_DEPTH_BUFFER_TEST)
+endif()
+
+# Set option to use a depth image instead of z buffer for depth test
+OPTION(USE_DEPTH_IMAGE_BUFFER "Use direct depth in depth buffer raycast" OFF)
+if(USE_DEPTH_IMAGE_BUFFER)
+message( STATUS "Using depth image as buffer")
+  add_definitions(-DGVDB_USE_DEPTH_IMAGE_BUFFER)
 endif()
 
 # Set the library type

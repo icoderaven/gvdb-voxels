@@ -303,11 +303,14 @@ inline __device__ float getLinearDepth(float* depthBufFloat)
 {
 	int x = blockIdx.x * blockDim.x + threadIdx.x;					// Pixel coordinates
 	int y = blockIdx.y * blockDim.y + threadIdx.y;
-
+#ifndef GVDB_USE_DEPTH_IMAGE_BUFFER
 	float z = depthBufFloat[(SCN_HEIGHT - 1 - y) * SCN_WIDTH + x];	// Get depth value
 	float n = scn.camnear;
 	float f = scn.camfar;
 	return (-n * f / (f - n)) / (z - (f / (f - n)));				// Return linear depth
+#else
+	return depthBufFloat[(SCN_HEIGHT - 1 - y) * SCN_WIDTH + x]; // Return row order depth image value with origin at lower left corner
+#endif
 }
 
 
@@ -468,15 +471,17 @@ __device__ void rayDeepBrick ( VDBInfo* gvdb, uchar chan, int nodeid, float3 t, 
 	for (; clr.w > SCN_ALPHACUT && iter < MAX_ITER && p.x >=0 && p.y >=0 && p.z >=0 && p.x < gvdb->res[0] && p.y < gvdb->res[0] && p.z < gvdb->res[0]; iter++) {			
 
 		// depth buffer test [optional]
-		if (SCN_DBUF != 0x0) {
-			float dist = t.x * fabsf(dot(scn.dir_vec, dir));
-			if (dist > getLinearDepth(SCN_DBUF) ) {
-				hit.y = length(wp - pos);
-				hit.z = 1;
-				clr = make_float4(fmin(clr.x, 1.f), fmin(clr.y, 1.f), fmin(clr.z, 1.f), fmax(clr.w, 0.f));
-				return;
+		#ifndef GVDB_SKIP_DEPTH_BUFFER_TEST
+			if (SCN_DBUF != 0x0) {
+				float dist = t.x * fabsf(dot(scn.dir_vec, dir));
+				if (dist > getLinearDepth(SCN_DBUF) ) {
+					hit.y = length(wp - pos);
+					hit.z = 1;
+					clr = make_float4(fmin(clr.x, 1.f), fmin(clr.y, 1.f), fmin(clr.z, 1.f), fmax(clr.w, 0.f));
+					return;
+				}
 			}
-		}
+		#endif
 		val = transfer ( gvdb, tex3D<float> ( gvdb->volIn[chan], p.x+o.x, p.y+o.y, p.z+o.z ) );
 		val.w = exp ( SCN_EXTINCT * val.w * SCN_PSTEP );
 		hclr = (gvdb->clr_chan==CHAN_UNDEF) ? make_float4(1,1,1,1) : getColorF (gvdb, gvdb->clr_chan, p+o );

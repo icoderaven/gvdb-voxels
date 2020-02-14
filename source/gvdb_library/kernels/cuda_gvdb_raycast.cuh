@@ -514,6 +514,7 @@ __device__ void rayCast ( VDBInfo* gvdb, uchar chan, float3 pos, float3 dir, flo
 	nodeid[lev]		= 0;		// rootid ndx
 	float3 t		= rayBoxIntersect ( pos, dir, gvdb->bmin, gvdb->bmax );	// intersect ray with bounding box	
 	VDBNode* node	= getNode ( gvdb, lev, nodeid[lev], &vmin );			// get root VDB node	
+	VDBNode* prev_node = node;
 	if ( t.z == NOHIT ) return;	
 
 	// 3DDA variables		
@@ -545,6 +546,10 @@ __device__ void rayCast ( VDBInfo* gvdb, uchar chan, float3 pos, float3 dir, flo
 		if ( isBitOn ( gvdb, node, b ) ) {							// check vdb bitmask for voxel occupancy						
 			if ( lev == 1 ) {									// enter brick function..
 				nodeid[0] = getChild ( gvdb, node, b ); 
+				if(nodeid[0] < 0 || nodeid[0] > gvdb->nodecnt[0]){
+					printf("!!!!!!!!!!!!!!!!!!!!!!!! %d %d\n", nodeid[0], gvdb->nodecnt[0]);
+					return;
+				}
 				t.x += gvdb->epsilon;
 				(*brickFunc) (gvdb, chan, nodeid[0], t, pos, dir, pStep, hit, norm, clr);
 				if ( clr.w <= 0) {

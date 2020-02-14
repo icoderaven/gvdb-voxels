@@ -38,7 +38,8 @@
 
 #include <cuda.h>
 #include <stdio.h>
-#include <host_defines.h>
+// #include <host_defines.h>
+#include <cuda_runtime.h>
 
 #define SYNCIT __syncthreads()
 

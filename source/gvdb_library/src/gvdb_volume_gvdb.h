@@ -30,11 +30,8 @@
 
 	using namespace nvdb;
 
-	typedef size_t	CUDPPHandle;		// avoid including "cudpp.h" as we dont want to require it public
-
 	#ifdef BUILD_OPENVDB
 		#include <openvdb/openvdb.h>
-		using namespace openvdb;
 
 		// OpenVDB <3,3,3,4> support
 		typedef openvdb::tree::Tree<openvdb::tree::RootNode<openvdb::tree::InternalNode<openvdb::tree::InternalNode<openvdb::tree::InternalNode<openvdb::tree::LeafNode<float,4>,3>,3>,3>>> FloatTree34; 
@@ -82,7 +79,6 @@
 		int				dim[MAXLEV];
 		int				res[MAXLEV];
 		Vector3DF		vdel[MAXLEV];
-		Vector3DF		voxelsize;
 		Vector3DI		noderange[MAXLEV];
 		int				nodecnt[MAXLEV];
 		int				nodewid[MAXLEV];
@@ -353,7 +349,6 @@
 			void SetCudaDevice ( int devid, CUcontext ctx=NULL );
 			void Initialize ();			
 			void Clear ();	
-			void SetVoxelSize ( float vx, float vy, float vz );
 			void SetProfile ( bool bCPU, bool bGPU ) ;
 			void SetDebug(bool dbg);
 			void LoadFunction ( int fid, std::string func, int mid, std::string ptx );
@@ -586,7 +581,7 @@
 					int x = (b & mask);
 					return Vector3DI(x,y,z);
 			}
-			Vector3DF getCover(int lv)	{ return mVoxsize * Vector3DF(getRange(lv)); }
+			Vector3DF getCover(int lv)	{ return Vector3DF(getRange(lv)); }
 			Vector3DI getRange(int lv)	{ 
 					if ( lv==-1 ) return Vector3DI(1,1,1);
 					Vector3DI r = getRes3DI(0);		// brick res
@@ -615,10 +610,9 @@
 			//-- Voxsize - this should be made obsolete by SetTransform in the future
 			Vector3DF getWorldMin ( Node* node );
 			Vector3DF getWorldMax ( Node* node );
-			Vector3DF getVoxelSize() { return mVoxsize; }
 			
 			//-- Grid Transform - arbitrary transforms on volume (replaces Voxsize)
-			void SetTransform(Vector3DF pretrans, Vector3DF angs, Vector3DF trans, Vector3DF scal);
+			void SetTransform(Vector3DF pretrans, Vector3DF scal, Vector3DF angs, Vector3DF trans);
 			Vector3DF getWorldMin();
 			Vector3DF getWorldMax();
 			Matrix4F& getTransform() { return mXform; }	
@@ -825,12 +819,6 @@
 			// Dummy frame buffer
 			int mDummyFrameBuffer;
 
-			// CUDPP
-			CUDPPHandle		mCudpp;
-			CUDPPHandle		mPlan_max; 
-			CUDPPHandle		mPlan_min; 
-			CUDPPHandle		mPlan_sort;
-
 			// CUDA Device & Context
 			int				mDevSelect;
 			CUcontext		mContext;
@@ -850,7 +838,7 @@
 			Vector3DF		mPretrans, mAngs, mTrans, mScale;
 			Matrix4F		mXform, mInvXform, mInvXrot;
 
-			const char*			mRendName[SHADE_MAX];
+			const char*		mRendName[SHADE_MAX];
 
 			float			m_bias;
 		};

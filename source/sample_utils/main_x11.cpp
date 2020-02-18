@@ -564,11 +564,11 @@ void NVPWindow::setTitle(const char *title){
 
 }
 
-void NVPWindow::resize_window ( int w, int h )
-{	
-    std::cout<<"Attempting to resize window to "<<w<<"x"<<h<<"...\n";
-    int result = XResizeWindow(m_internal->m_dpy, m_internal->m_window, w, h);
-    std::cout<<result;
+void NVPWindow::resize_window(int w, int h)
+{
+	std::cout << "Attempting to resize window to " << w << "x" << h << "...\n";
+	int result = XResizeWindow(m_internal->m_dpy, m_internal->m_window, w, h);
+	std::cout << result;
 }
 
 void NVPWindow::maximize(){
@@ -924,16 +924,15 @@ void NVPWindow::clearScreenGL ()
 
 void NVPWindow::renderScreenQuadGL(int glid, char inv1)
 {
-	renderScreenQuadGL ( glid, -1, (float)0, (float)0, (float)getWidth(), (float)getHeight(), inv1); 
+	renderScreenQuadGL(glid, -1, (float)0, (float)0, (float)getWidth(), (float)getHeight(), inv1);
 }
 
 void NVPWindow::compositeScreenQuadGL(int glid1, int glid2, char inv1, char inv2)
 {
-	renderScreenQuadGL( glid1, glid2, (float)0, (float)0, (float)getWidth(), (float)getHeight(), inv1, inv2 );
+	renderScreenQuadGL(glid1, glid2, (float)0, (float)0, (float)getWidth(), (float)getHeight(), inv1, inv2);
 }
 
 void NVPWindow::renderScreenQuadGL ( int glid1, int glid2, float x1, float y1, float x2, float y2, char inv1, char inv2 )
-
 {
 	// Prepare pipeline
 	glDisable(GL_DEPTH_TEST);
@@ -1293,16 +1292,18 @@ void nverror ()
 	nvprintf ( "Error. Application will exit." );
 	exit(-1);
 }
-bool getFileLocation ( char* filename, char* outpath )
+bool getFileLocation ( const char* filename, char* outpath )
 {
 	std::vector<std::string> paths;
 	paths.push_back ( "./");
+#ifdef ASSET_PATH
 	paths.push_back ( ASSET_PATH );
+#endif
 	bool result = getFileLocation ( filename, outpath, paths );
 	return result;
 }
 
-bool getFileLocation ( char* filename, char* outpath, std::vector<std::string> searchPaths )
+bool getFileLocation ( const char* filename, char* outpath, std::vector<std::string> searchPaths )
 {
 	bool found = false;
 	FILE* fp = fopen( filename, "rb" );

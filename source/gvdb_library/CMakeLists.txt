@@ -57,6 +57,12 @@ target_sources(gvdbPTX
 target_compile_options(gvdbPTX
     PRIVATE --use_fast_math)
 
+# Also make sure that we build PTX for the current GPU architecture
+find_package(CUDA)
+cuda_select_nvcc_arch_flags(ARCH_FLAGS "Auto")
+message("ARCH_FLAGS are ${ARCH_FLAGS}")
+target_compile_options(gvdbPTX PRIVATE ${ARCH_FLAGS})
+
 # Export our additional target include directories.
 target_include_directories(gvdbPTX
     INTERFACE   $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/kernels>

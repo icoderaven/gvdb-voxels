@@ -69,6 +69,23 @@ file(WRITE "${CMAKE_CURRENT_LIST_DIR}/dummy.cpp" "")
 
 add_library(gvdb SHARED "${CMAKE_CURRENT_LIST_DIR}/dummy.cpp")
 
+set(KERNELS_SOURCE_FILES "cuda_gvdb_copydata.cu" "cuda_gvdb_module.cu")
+message("kernel files found are ${KERNELS_SOURCE_FILES}")
+foreach(_FILE ${KERNELS_SOURCE_FILES})
+    string(REPLACE ".cu"
+                    ".ptx"
+                    _FILE_PTX
+                    ${_FILE})
+    string(TOUPPER ${_FILE_PTX} _FILE_UPPER)
+    string(REPLACE "."
+                    "_"
+                    _MACRO
+                    ${_FILE_UPPER})
+    target_compile_definitions(gvdb
+        PRIVATE  ${_MACRO}="$<TARGET_FILE_DIR:gvdb>/${_FILE_PTX}"
+    )
+endforeach(_FILE)
+
 # Add sources - this tells our compiler which files to build, as well as which
 # files to show in IDEs.
 target_sources(gvdb
@@ -132,14 +149,14 @@ endif()
 OPTION(SKIP_DEPTH_BUFFER_TEST "Skip depth buffer test in raycast" OFF)
 if(SKIP_DEPTH_BUFFER_TEST)
   message( STATUS "Skipping depth buffer test in raycast")
-  add_definitions(-DGVDB_SKIP_DEPTH_BUFFER_TEST)
+  target_compile_definitions(gvdbPTX PUBLIC GVDB_SKIP_DEPTH_BUFFER_TEST)
 endif()
 
 # Set option to use a depth image instead of z buffer for depth test
 OPTION(USE_DEPTH_IMAGE_BUFFER "Use direct depth in depth buffer raycast" OFF)
 if(USE_DEPTH_IMAGE_BUFFER)
   message( STATUS "Using depth image as buffer")
-  add_definitions(-DGVDB_USE_DEPTH_IMAGE_BUFFER)
+  target_compile_definitions(gvdbPTX PUBLIC GVDB_USE_DEPTH_IMAGE_BUFFER)
 endif()
 
 macro(_gvdb_find variable path)

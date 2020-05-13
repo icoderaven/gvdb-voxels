@@ -134,7 +134,7 @@ __device__ void UpdateApron(VDBInfo* gvdb, const uchar channel, const int brickC
 		}
 	
 
-	if(gvdb->use_tex_mem[chan]){
+	if(gvdb->use_tex_mem[channel]){
 		surf3Dwrite(value, gvdb->volOut[channel], atlasVoxel.x * sizeof(T), atlasVoxel.y, atlasVoxel.z);
 	}
 	else{
@@ -146,13 +146,13 @@ __device__ void UpdateApron(VDBInfo* gvdb, const uchar channel, const int brickC
 		// 	printf("temp:%u %u %u vox: %u %u %u brickres %d wpos: %f %f %f offs: %f %f %f\n", temp.x, temp.y, temp.z, vox.x, vox.y, vox.z, brickres, wpos.x, wpos.y, wpos.z, offs.x, offs.y, offs.z);
 		// }
 		int3 res = gvdb->atlas_res;
-		unsigned long int atlas_id = static_cast<uint>(off.z) * (res.x*res.y) + static_cast<uint>(off.y) * res.x + static_cast<uint>(off.x) ;
-		T *atlas_mem = (T *) (gvdb->atlas_dev_mem[chan]) + atlas_id;
+		unsigned long int atlas_id = static_cast<uint>(offs.z) * (res.x*res.y) + static_cast<uint>(offs.y) * res.x + static_cast<uint>(offs.x) ;
+		T *atlas_mem = (T *) (gvdb->atlas_dev_mem[channel]) + atlas_id;
 		if(node!=0x0) {
 			value = *atlas_mem;
 		}
-		atlas_id = vox.z * (res.x*res.y) + vox.y * res.x + vox.x ;
-		atlas_mem = (T *) (gvdb->atlas_dev_mem[chan]) + atlas_id;
+		atlas_id = atlasVoxel.z * (res.x*res.y) + atlasVoxel.y * res.x + atlasVoxel.x ;
+		atlas_mem = (T *) (gvdb->atlas_dev_mem[channel]) + atlas_id;
 		*atlas_mem = value;
 	}
 }

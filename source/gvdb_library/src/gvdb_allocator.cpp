@@ -84,7 +84,7 @@ void Allocator::PoolCreate ( uchar grp, uchar lev, uint64 width, uint64 initmax,
 	if ( p.size == 0 ) return;		// placeholder pool, do not allocate
 
 	// cpu allocate
-	p.cpu = (char*) malloc ( p.size );
+	p.cpu = (char*) calloc ( p.size, 1 );
 	if ( p.cpu == 0x0 ) {
 		gprintf ( "ERROR: Unable to malloc %lld for pool lev %d\n", p.size, lev );
 		gerror ();
@@ -94,6 +94,7 @@ void Allocator::PoolCreate ( uchar grp, uchar lev, uint64 width, uint64 initmax,
 	if ( bGPU ) {
 		size_t sz = p.size;
 		cudaCheck ( cuMemAlloc ( &p.gpu, sz ), "Allocator", "PoolCreate", "cuMemAlloc", "", mbDebug );
+		cudaCheck ( cuMemsetD8 ( p.gpu, 0, sz ), "Allocator", "PoolCreate", "cuMemsetD8", "", mbDebug );
 	}
 	mPool[grp].push_back ( p );
 }
@@ -178,7 +179,7 @@ uint64 Allocator::PoolAlloc ( uchar grp, uchar lev, bool bGPU )
 		p->max *= 2;
 		p->size = p->stride * p->max;
 		if ( p->cpu != 0x0 ) {
-			char* new_cpu = (char*) malloc ( p->size );
+			char* new_cpu = (char*) calloc ( p->size, 1 );
 			memcpy ( new_cpu, p->cpu, p->stride*p->lastEle );
 			free ( p->cpu );
 			p->cpu = new_cpu;
@@ -187,6 +188,7 @@ uint64 Allocator::PoolAlloc ( uchar grp, uchar lev, bool bGPU )
 			size_t sz = p->size;	
 			CUdeviceptr new_gpu;
 			cudaCheck ( cuMemAlloc ( &new_gpu, sz ), "Allocator", "PoolAlloc", "cuMemAlloc", "", mbDebug);
+			cudaCheck ( cuMemsetD8 ( new_gpu, 0, sz ), "Allocator", "PoolAlloc", "cuMemsetD8", "", mbDebug);
 			cudaCheck ( cuMemcpy ( new_gpu, p->gpu, p->stride*p->lastEle), "Allocator", "PoolAlloc", "cuMemcpy", "", mbDebug);
 			cudaCheck ( cuMemFree ( p->gpu ), "Allocator", "PoolAlloc", "cuMemFree", "", mbDebug );
 			p->gpu = new_gpu;
@@ -377,11 +379,11 @@ void Allocator::AllocateTextureGPU ( DataPtr& p, uchar dtype, Vector3DI res, boo
 			surfReadDesc.res.array.hArray = reinterpret_cast<CUarray>(p.garray);
 
 			CUDA_TEXTURE_DESC texReadDesc = {};
-			texReadDesc.addressMode[0] = CU_TR_ADDRESS_MODE_WRAP;
-			texReadDesc.addressMode[1] = CU_TR_ADDRESS_MODE_WRAP;
-			texReadDesc.addressMode[2] = CU_TR_ADDRESS_MODE_WRAP;
+			texReadDesc.addressMode[0] = CU_TR_ADDRESS_MODE_CLAMP;
+			texReadDesc.addressMode[1] = CU_TR_ADDRESS_MODE_CLAMP;
+			texReadDesc.addressMode[2] = CU_TR_ADDRESS_MODE_CLAMP;
 
-			texReadDesc.filterMode = CU_TR_FILTER_MODE_LINEAR;
+			texReadDesc.filterMode = CU_TR_FILTER_MODE_POINT;
 
 			cudaCheck(cuTexObjectCreate(&p.tex_obj, &surfReadDesc, &texReadDesc, nullptr), "Allocator", "AllocateTextureGPU", "cuGraphicsUnmapResources", "", mbDebug);
 
@@ -423,11 +425,11 @@ void Allocator::AllocateTextureGPU ( DataPtr& p, uchar dtype, Vector3DI res, boo
             surfReadDesc.res.array.hArray = reinterpret_cast<CUarray>(p.garray);
 
             CUDA_TEXTURE_DESC texReadDesc = {};
-            texReadDesc.addressMode[0] = CU_TR_ADDRESS_MODE_WRAP;
-            texReadDesc.addressMode[1] = CU_TR_ADDRESS_MODE_WRAP;
-            texReadDesc.addressMode[2] = CU_TR_ADDRESS_MODE_WRAP;
+            texReadDesc.addressMode[0] = CU_TR_ADDRESS_MODE_CLAMP;
+            texReadDesc.addressMode[1] = CU_TR_ADDRESS_MODE_CLAMP;
+            texReadDesc.addressMode[2] = CU_TR_ADDRESS_MODE_CLAMP;
 
-            texReadDesc.filterMode = CU_TR_FILTER_MODE_LINEAR;
+            texReadDesc.filterMode = CU_TR_FILTER_MODE_POINT;
 
             cudaCheck(cuTexObjectCreate(&p.tex_obj, &surfReadDesc, &texReadDesc, nullptr), "Allocator", "AllocateTextureGPU", "cuGraphicsUnmapResources", "", mbDebug);
             
@@ -826,10 +828,10 @@ void Allocator::AtlasCopyLinear ( uchar chan, Vector3DI offset, CUdeviceptr gpu_
 void Allocator::AtlasRetrieveTexXYZ ( uchar chan, Vector3DI val, DataPtr& dest )
 {
 	Vector3DI atlasres = getAtlasRes(chan);
-	int brickres = mAtlas[chan].subdim.x;
+	Vector3DI brickres = mAtlas[chan].subdim;
 	
 	Vector3DI block ( 8, 8, 8 );
-	Vector3DI grid ( int(brickres/block.x)+1, int(brickres/block.y)+1, int(brickres/block.z)+1 );
+	Vector3DI grid ( int(brickres.x/block.x)+1, int(brickres.y/block.y)+1, int(brickres.z/block.z)+1 );
 
 	void* args[5] = { &val, &atlasres, &brickres, &dest.gpu, &mAtlas[chan].tex_obj };
 	cudaCheck ( cuLaunchKernel ( cuRetrieveTexXYZ, grid.x, grid.y, grid.z, block.x, block.y, block.z, 0, NULL, args, NULL ), "Allocator", "AtlasRetrieveXYZ", "cuLaunch", "cuRetrieveTexXYZ", mbDebug);

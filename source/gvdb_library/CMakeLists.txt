@@ -33,7 +33,8 @@ endif()
 
 # Compile a couple of source files into a PTX object library.
 # Creates an object library target named gvdbPTX.
-add_library(gvdbPTX OBJECT "kernels/cuda_gvdb_copydata.cu" "kernels/cuda_gvdb_module.cu")
+set(GVDB_PTX_SOURCE_FILES "kernels/cuda_gvdb_copydata.cu" "kernels/cuda_gvdb_module.cu")
+add_library(gvdbPTX OBJECT ${GVDB_PTX_SOURCE_FILES})
 # Make sure it compiles to a PTX file.
 set_target_properties(gvdbPTX PROPERTIES CUDA_PTX_COMPILATION ON)
 # Private and public sources are compiled into the target.
@@ -138,7 +139,6 @@ target_include_directories(gvdb
                 $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/kernels>
                 $<INSTALL_INTERFACE:include>)
 
-
 # Make sure to link against CUDA and OpenGL
 target_link_libraries(gvdb
     PUBLIC ${OPENGL_LIBRARIES})
@@ -234,7 +234,9 @@ if(GVDB_BUILD_OPENVDB)
         endif()
         
         # Find the paths to our .lib files manually:
-        _gvdb_find(GVDB_OPENVDB_LIB_DEBUG ${GVDB_OPENVDB_LIB_DEBUG_DIR}/openvdb.lib)
+        _gvdb_find(GVDB_OPENVDB_LIB_DEBUG ${GVDB_OPENVDB_LIB_DEBUG_DIR}/openvdb_d.lib)
+		# Compatibility for OpenVDB < 7.0
+		_gvdb_find(GVDB_OPENVDB_LIB_DEBUG ${GVDB_OPENVDB_LIB_DEBUG_DIR}/openvdb.lib)
         _gvdb_find(GVDB_TBB_LIB_DEBUG     ${GVDB_OPENVDB_LIB_DEBUG_DIR}/tbb_debug.lib)
         _gvdb_find(GVDB_BLOSC_LIB_DEBUG   ${GVDB_OPENVDB_LIB_DEBUG_DIR}/blosc.lib)
         _gvdb_find(GVDB_ZLIB_LIB_DEBUG    ${GVDB_OPENVDB_LIB_DEBUG_DIR}/zlib*.lib)
@@ -300,6 +302,16 @@ target_compile_definitions(gvdb
 target_compile_definitions(gvdb PUBLIC GLEW_STATIC)
 target_sources(gvdb PRIVATE ${GLEW_SOURCE})
 target_include_directories(gvdb PRIVATE ${GLEW_INCLUDE_DIR})
+
+# Allow GVDB to use e.g. CUDA_GVDB_COPYDATA as a macro for "cuda_gvdb_copydata.ptx"
+foreach(_FILE ${GVDB_PTX_SOURCE_FILES})
+	get_filename_component(_FILE ${_FILE} NAME) # cuda_gvdb_copydata.cu
+	string(REPLACE ".cu" ".ptx" _FILE ${_FILE}) # cuda_gvdb_copydata.ptx
+	string(REPLACE "." "_" _MACRO ${_FILE})     # cuda_gvdb_copydata_ptx
+	string(TOUPPER ${_MACRO} _MACRO) # Yep, this goes input, then output!
+	target_compile_definitions(gvdb PUBLIC
+		${_MACRO}="${_FILE}")
+endforeach()
 
 # Finally, make our targets importable from the build directory.
 export(TARGETS gvdb gvdbPTX FILE GVDBConfig.cmake)

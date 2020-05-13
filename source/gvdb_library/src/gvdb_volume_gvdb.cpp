@@ -241,88 +241,88 @@ void VolumeGVDB::SetCudaDevice ( int devid, CUcontext ctx )
 
 	//--- Load cuda kernels
 	// Raytracing
-	LoadFunction ( FUNC_RAYDEEP,			"gvdbRayDeep",					MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_RAYVOXEL,			"gvdbRaySurfaceVoxel",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_RAYTRILINEAR,		"gvdbRaySurfaceTrilinear",		MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_RAYTRICUBIC,		"gvdbRaySurfaceTricubic",		MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_RAYSURFACE_DEPTH,	"gvdbRaySurfaceDepth",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_RAYLEVELSET,		"gvdbRayLevelSet",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_EMPTYSKIP,			"gvdbRayEmptySkip",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_SECTION2D,			"gvdbSection2D",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_SECTION3D,			"gvdbSection3D",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);	
-	LoadFunction ( FUNC_RAYTRACE,			"gvdbRaytrace",					MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
+	LoadFunction ( FUNC_RAYDEEP,			"gvdbRayDeep",					MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_RAYVOXEL,			"gvdbRaySurfaceVoxel",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_RAYTRILINEAR,		"gvdbRaySurfaceTrilinear",		MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_RAYTRICUBIC,		"gvdbRaySurfaceTricubic",		MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_RAYSURFACE_DEPTH,	"gvdbRaySurfaceDepth",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_RAYLEVELSET,		"gvdbRayLevelSet",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_EMPTYSKIP,			"gvdbRayEmptySkip",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_SECTION2D,			"gvdbSection2D",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_SECTION3D,			"gvdbSection3D",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );	
+	LoadFunction ( FUNC_RAYTRACE,			"gvdbRaytrace",					MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
 	
 	// Sorting / Points / Triangles
-	LoadFunction ( FUNC_PREFIXSUM,			"prefixSum",					MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_PREFIXFIXUP,		"prefixFixup",					MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_INSERT_POINTS,		"gvdbInsertPoints",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_SORT_POINTS,		"gvdbSortPoints",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);	
-	LoadFunction ( FUNC_SCATTER_DENSITY,	"gvdbScatterPointDensity",		MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_SCATTER_AVG_COL,	"gvdbScatterPointAvgCol",		MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_INSERT_TRIS,		"gvdbInsertTriangles",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_SORT_TRIS,			"gvdbSortTriangles",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_VOXELIZE,			"gvdbVoxelize",					MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);	
-	LoadFunction ( FUNC_RESAMPLE,			"gvdbResample",					MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_REDUCTION,			"gvdbReduction",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_DOWNSAMPLE,			"gvdbDownsample",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_SCALE_PNT_POS,		"gvdbScalePntPos",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_CONV_AND_XFORM,		"gvdbConvAndTransform",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
+	LoadFunction ( FUNC_PREFIXSUM,			"prefixSum",					MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_PREFIXFIXUP,		"prefixFixup",					MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_INSERT_POINTS,		"gvdbInsertPoints",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_SORT_POINTS,		"gvdbSortPoints",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );	
+	LoadFunction ( FUNC_SCATTER_DENSITY,	"gvdbScatterPointDensity",		MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_SCATTER_AVG_COL,	"gvdbScatterPointAvgCol",		MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_INSERT_TRIS,		"gvdbInsertTriangles",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_SORT_TRIS,			"gvdbSortTriangles",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_VOXELIZE,			"gvdbVoxelize",					MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );	
+	LoadFunction ( FUNC_RESAMPLE,			"gvdbResample",					MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_REDUCTION,			"gvdbReduction",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_DOWNSAMPLE,			"gvdbDownsample",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_SCALE_PNT_POS,		"gvdbScalePntPos",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_CONV_AND_XFORM,		"gvdbConvAndTransform",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
 
-	LoadFunction ( FUNC_ADD_SUPPORT_VOXEL,	"gvdbAddSupportVoxel",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_INSERT_SUPPORT_POINTS, "gvdbInsertSupportPoints",	MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
+	LoadFunction ( FUNC_ADD_SUPPORT_VOXEL,	"gvdbAddSupportVoxel",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_INSERT_SUPPORT_POINTS, "gvdbInsertSupportPoints",	MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
 
 	// Topology
-	LoadFunction ( FUNC_FIND_ACTIV_BRICKS,	"gvdbFindActivBricks",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);	
-	LoadFunction ( FUNC_BITONIC_SORT,		"gvdbBitonicSort",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);	
-	LoadFunction ( FUNC_CALC_BRICK_ID,		"gvdbCalcBrickId",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);	
-	LoadFunction ( FUNC_RADIX_SUM,			"RadixSum",						MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);	
-	LoadFunction ( FUNC_RADIX_PREFIXSUM,	"RadixPrefixSum",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_RADIX_SHUFFLE,		"RadixAddOffsetsAndShuffle",	MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_FIND_UNIQUE,		"gvdbFindUnique",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_COMPACT_UNIQUE,		"gvdbCompactUnique",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_LINK_BRICKS,		"gvdbLinkBricks",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
+	LoadFunction ( FUNC_FIND_ACTIV_BRICKS,	"gvdbFindActivBricks",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );	
+	LoadFunction ( FUNC_BITONIC_SORT,		"gvdbBitonicSort",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );	
+	LoadFunction ( FUNC_CALC_BRICK_ID,		"gvdbCalcBrickId",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );	
+	LoadFunction ( FUNC_RADIX_SUM,			"RadixSum",						MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );	
+	LoadFunction ( FUNC_RADIX_PREFIXSUM,	"RadixPrefixSum",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_RADIX_SHUFFLE,		"RadixAddOffsetsAndShuffle",	MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_FIND_UNIQUE,		"gvdbFindUnique",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_COMPACT_UNIQUE,		"gvdbCompactUnique",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_LINK_BRICKS,		"gvdbLinkBricks",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
 
 	// Incremental Topology
-	LoadFunction ( FUNC_CALC_EXTRA_BRICK_ID,"gvdbCalcExtraBrickId",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);	
+	LoadFunction ( FUNC_CALC_EXTRA_BRICK_ID,"gvdbCalcExtraBrickId",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );	
 
-	LoadFunction ( FUNC_CALC_INCRE_BRICK_ID,"gvdbCalcIncreBrickId",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);	
-	LoadFunction ( FUNC_CALC_INCRE_EXTRA_BRICK_ID,"gvdbCalcIncreExtraBrickId",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);	
+	LoadFunction ( FUNC_CALC_INCRE_BRICK_ID,"gvdbCalcIncreBrickId",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );	
+	LoadFunction ( FUNC_CALC_INCRE_EXTRA_BRICK_ID,"gvdbCalcIncreExtraBrickId",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );	
 
-	LoadFunction ( FUNC_DELINK_LEAF_BRICKS,	"gvdbDelinkLeafBricks",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_DELINK_BRICKS,		"gvdbDelinkBricks",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_MARK_LEAF_NODE,		"gvdbMarkLeafNode",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
+	LoadFunction ( FUNC_DELINK_LEAF_BRICKS,	"gvdbDelinkLeafBricks",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_DELINK_BRICKS,		"gvdbDelinkBricks",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_MARK_LEAF_NODE,		"gvdbMarkLeafNode",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
 
 	// Gathering
-	LoadFunction ( FUNC_COUNT_SUBCELL,		"gvdbCountSubcell",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);	
-	LoadFunction ( FUNC_INSERT_SUBCELL,		"gvdbInsertSubcell",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);	
+	LoadFunction ( FUNC_COUNT_SUBCELL,		"gvdbCountSubcell",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );	
+	LoadFunction ( FUNC_INSERT_SUBCELL,		"gvdbInsertSubcell",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );	
 	LoadFunction ( FUNC_INSERT_SUBCELL_FP16,"gvdbInsertSubcell_fp16",		MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_GATHER_DENSITY,		"gvdbGatherDensity",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);	
+	LoadFunction ( FUNC_GATHER_DENSITY,		"gvdbGatherDensity",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );	
 	LoadFunction ( FUNC_GATHER_LEVELSET,	"gvdbGatherLevelSet",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
 	LoadFunction ( FUNC_GATHER_LEVELSET_FP16, "gvdbGatherLevelSet_fp16",    MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
 	
-	LoadFunction ( FUNC_CALC_SUBCELL_POS,	"gvdbCalcSubcellPos",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);	
-	LoadFunction ( FUNC_MAP_EXTRA_GVDB,		"gvdbMapExtraGVDB",			    MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);	
-	LoadFunction ( FUNC_SPLIT_POS,			"gvdbSplitPos",					MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_SET_FLAG_SUBCELL,	"gvdbSetFlagSubcell",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);	
+	LoadFunction ( FUNC_CALC_SUBCELL_POS,	"gvdbCalcSubcellPos",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );	
+	LoadFunction ( FUNC_MAP_EXTRA_GVDB,		"gvdbMapExtraGVDB",			    MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );	
+	LoadFunction ( FUNC_SPLIT_POS,			"gvdbSplitPos",					MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_SET_FLAG_SUBCELL,	"gvdbSetFlagSubcell",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );	
 
-	LoadFunction ( FUNC_READ_GRID_VEL,		"gvdbReadGridVel",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);	
-	LoadFunction ( FUNC_CHECK_VAL,			"gvdbCheckVal",					MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);	
+	LoadFunction ( FUNC_READ_GRID_VEL,		"gvdbReadGridVel",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );	
+	LoadFunction ( FUNC_CHECK_VAL,			"gvdbCheckVal",					MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );	
 	
 	// Apron Updates
-	LoadFunction ( FUNC_UPDATEAPRON_F,		"gvdbUpdateApronF",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_UPDATEAPRON_F4,		"gvdbUpdateApronF4",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_UPDATEAPRON_C,		"gvdbUpdateApronC",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_UPDATEAPRON_C4,		"gvdbUpdateApronC4",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_UPDATEAPRONFACES_F, "gvdbUpdateApronFacesF",		MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
+	LoadFunction ( FUNC_UPDATEAPRON_F,		"gvdbUpdateApronF",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_UPDATEAPRON_F4,		"gvdbUpdateApronF4",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_UPDATEAPRON_C,		"gvdbUpdateApronC",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_UPDATEAPRON_C4,		"gvdbUpdateApronC4",			MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_UPDATEAPRONFACES_F, "gvdbUpdateApronFacesF",		MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
 	
 	// Operators
-	LoadFunction ( FUNC_FILL_F,				"gvdbOpFillF",					MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_FILL_C,				"gvdbOpFillC",					MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_FILL_C4,			"gvdbOpFillC4",					MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_SMOOTH,				"gvdbOpSmooth",					MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);
-	LoadFunction ( FUNC_NOISE,				"gvdbOpNoise",					MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);	
-	LoadFunction ( FUNC_CLR_EXPAND,			"gvdbOpClrExpand",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);	
-	LoadFunction ( FUNC_EXPANDC,			"gvdbOpExpandC",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX);	
+	LoadFunction ( FUNC_FILL_F,				"gvdbOpFillF",					MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_FILL_C,				"gvdbOpFillC",					MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_FILL_C4,			"gvdbOpFillC4",					MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_SMOOTH,				"gvdbOpSmooth",					MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );
+	LoadFunction ( FUNC_NOISE,				"gvdbOpNoise",					MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );	
+	LoadFunction ( FUNC_CLR_EXPAND,			"gvdbOpClrExpand",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );	
+	LoadFunction ( FUNC_EXPANDC,			"gvdbOpExpandC",				MODL_PRIMARY, CUDA_GVDB_MODULE_PTX );	
 
 	SetModule ( cuModule[MODL_PRIMARY] );	
 
@@ -497,43 +497,50 @@ void VolumeGVDB::ConvertBitmaskToNonBitmask( int levs )
 
 
 // Load a VBX file
-bool VolumeGVDB::LoadVBX(std::string fname, int force_maj, int force_min)
+bool VolumeGVDB::LoadVBX(const std::string fname, int force_maj, int force_min)
 {
+	// See GVDB_FILESPEC.txt for the specification of the VBX file format.
 	PUSH_CTX
 
-		char buf[2048];
-	strcpy(buf, fname.c_str());
-	FILE* fp = fopen(buf, "rb");
+	FILE* fp = fopen(fname.c_str(), "rb");
 	if (fp == 0x0) {
-		gprintf("Error: Unable to open file %s\n", buf);
+		gprintf("Error: Unable to open file %s\n", fname.c_str());
 		return false;
 	}
 
 	PERF_PUSH("Read VBX");
 
-	// Read VDB config
+	// Read VBX config
 	uchar major, minor;
 	int num_grids;
-	char grid_name[512];
+	const int grid_name_len = 256; // Length of grid_name
+	char grid_name[grid_name_len];
 	char grid_components;
 	char grid_dtype;
 	char grid_compress;
 	char grid_topotype;
 	int  grid_reuse;
 	char grid_layout;
-	int levels, leafcnt, apron;
+
+	int leafcnt;
 	int num_chan;
-	Vector3DI axisres, axiscnt, leafdim;
-	int ld[MAXLEV], res[MAXLEV];
+	Vector3DI leafdim;
+	int apron;
+	Vector3DI axiscnt;
+	Vector3DI axisres;
+	Vector3DF voxelsize_deprecated;
+	slong atlas_sz;
+
+	int levels;
+	uint64 root;
 	Vector3DI range[MAXLEV];
+	int ld[MAXLEV], res[MAXLEV];
 	int cnt0[MAXLEV], cnt1[MAXLEV];
 	int width0[MAXLEV], width1[MAXLEV];
-	Vector3DF voxelsize_deprecated;
-	uint64 atlas_sz, root;
 
 	std::vector<uint64> grid_offs;
 
-	//--- gvdb header
+	//--- VBX file header
 	fread (&major, sizeof(uchar), 1, fp);					// major version
 	fread (&minor, sizeof(uchar), 1, fp);					// minor version
 
@@ -557,17 +564,19 @@ bool VolumeGVDB::LoadVBX(std::string fname, int force_maj, int force_min)
 	fread ( &num_grids, sizeof(int), 1, fp );				// number of grids
 
 	// bitmask info
-	uchar use_masks = 0;
+	uchar use_masks = 0; // Whether the read volume should use bitmasks
 	#ifdef USE_BITMASKS
 		use_masks = 1;
-	#endif	
-	uchar read_masks = 0;
-	if ((major==1 && minor >= 1) || major > 1) {
-		// GVDB >=1.1, bitmasks optional 
-		fread(&read_masks, sizeof(uchar), 1, fp);			
-	} else {
-		read_masks = 1;			// Earlier than v1.1 always has bitmask
-	}	
+	#endif
+	uchar read_masks = 0; // Whether the VBX file uses bitmasks
+	if (major >= 2) {
+		// GVDB >= 2, bitmasks optional 
+		fread(&read_masks, sizeof(uchar), 1, fp);
+	}
+	else if (major == 1 && minor == 0) {
+		// GVDB 1.0 always uses bitmasks
+		read_masks = 1;
+	}
 	
 	//--- grid offset table
 	for (int n=0; n < num_grids; n++ ) {
@@ -578,26 +587,25 @@ bool VolumeGVDB::LoadVBX(std::string fname, int force_maj, int force_min)
 	for (int n = 0; n < num_grids; n++) {
 
 		//---- grid header
-		fread(&grid_name, 256, 1, fp);					// grid name		
+		fread(&grid_name, 256, 1, fp);					// grid name
 		fread(&grid_dtype, sizeof(uchar), 1, fp);		// grid data type
 		fread(&grid_components, sizeof(uchar), 1, fp);	// grid components
-		fread(&grid_compress, sizeof(uchar), 1, fp);		// grid compression (0=none, 1=blosc, 2=..)
+		fread(&grid_compress, sizeof(uchar), 1, fp);	// grid compression (0=none, 1=blosc, 2=..)
 		fread(&voxelsize_deprecated, sizeof(float), 3, fp);	// voxel size
-		fread(&leafcnt, sizeof(int), 1, fp);				// total brick count
+		fread(&leafcnt, sizeof(int), 1, fp);			// total brick count
 		fread(&leafdim.x, sizeof(int), 3, fp);			// brick dimensions
 		fread(&apron, sizeof(int), 1, fp);				// brick apron
 		fread(&num_chan, sizeof(int), 1, fp);			// number of channels
-		fread(&atlas_sz, sizeof(uint64), 1, fp);			// total atlas size (all channels)
-		fread(&grid_topotype, sizeof(uchar), 1, fp);		// topology type? (0=none, 1=reuse, 2=gvdb, 3=..)
+		fread(&atlas_sz, sizeof(uint64), 1, fp);		// total atlas size (all channels)
+		fread(&grid_topotype, sizeof(uchar), 1, fp);	// topology type? (0=none, 1=reuse, 2=gvdb, 3=..)
 		fread(&grid_reuse, sizeof(int), 1, fp);			// topology reuse
 		fread(&grid_layout, sizeof(uchar), 1, fp);		// brick layout? (0=atlas, 1=brick)
 		fread(&axiscnt.x, sizeof(int), 3, fp);			// atlas brick count
 		fread(&axisres.x, sizeof(int), 3, fp);			// atlas res
 
-
 		//---- topology section
 		fread(&levels, sizeof(int), 1, fp);				// num levels
-		fread(&root, sizeof(uint64), 1, fp);			// root id	
+		fread(&root, sizeof(uint64), 1, fp);			// root id
 		for (int n = 0; n < levels; n++) {
 			fread(&ld[n], sizeof(int), 1, fp);
 			fread(&res[n], sizeof(int), 1, fp);
@@ -621,10 +629,9 @@ bool VolumeGVDB::LoadVBX(std::string fname, int force_maj, int force_min)
 		mRoot = root;		// must be set after initialize
 
 		// Read topology
-//		char* dat;
 		for (int n=0; n < levels; n++ ) {
-			mPool->PoolRead ( fp, 0, n, cnt0[n], width0[n]);
-		}			
+			mPool->PoolRead(fp, 0, n, cnt0[n], width0[n]);
+		}
 		for (int n = 0; n < levels; n++) {
 			mPool->PoolRead(fp, 1, n, cnt1[n], width1[n]);
 		}
@@ -639,29 +646,27 @@ bool VolumeGVDB::LoadVBX(std::string fname, int force_maj, int force_min)
 		// Atlas section
 		DestroyChannels ();
 		
-		// Read atlas into GPU slice-by-slice to conserve CPU and GPU mem		
-		for (int chan = 0 ; chan < num_chan; chan++ ) {			
-		
-			uint64 cpos = ftell ( fp );				
-
+		// Read atlas into GPU slice-by-slice to conserve CPU and GPU mem
+		for (int chan = 0 ; chan < num_chan; chan++ ) {
 			int chan_type, chan_stride;
 			fread ( &chan_type, sizeof(int), 1, fp );
 			fread ( &chan_stride, sizeof(int), 1, fp );
-			
+
 			AddChannel ( chan, chan_type, apron, F_LINEAR, F_BORDER, axiscnt );		// provide axiscnt
-					
+
 			mPool->AtlasSetNum ( chan, cnt0[0] );		// assumes atlas contains all bricks (all are resident)
 
-			DataPtr slice;			
+			DataPtr slice;
 			mPool->CreateMemLinear ( slice, 0x0, chan_stride, axisres.x*axisres.y, true );
 			for (int z = 0; z < axisres.z; z++ ) {
 				fread ( slice.cpu, slice.size, 1, fp );
-				mPool->AtlasWriteSlice ( chan, z, slice.size, slice.gpu, (uchar*) slice.cpu );		// transfer from GPU, directly into CPU atlas				
+				mPool->AtlasWriteSlice ( chan, z, static_cast<int>(slice.size),
+					slice.gpu, (uchar*) slice.cpu );		// transfer from GPU, directly into CPU atlas				
 			}
-			mPool->FreeMemLinear ( slice );	
+			mPool->FreeMemLinear ( slice );
 		}
 		UpdateAtlas ();
-	}	
+	}
 
 	PERF_POP ();
 
@@ -1610,147 +1615,143 @@ void VolumeGVDB::ClearAllChannels ()
 }
 
 // Save a VBX file
-void VolumeGVDB::SaveVBX ( std::string fname )
+void VolumeGVDB::SaveVBX ( const std::string fname )
 {
+	// See GVDB_FILESPEC.txt for the specification of the VBX file format.
 	PUSH_CTX
-
-	int cnt[2], width[2];
-	Vector3DI range;
-	char buf[512];
-	strcpy ( buf, fname.c_str() );
 	
-	FILE* fp = fopen ( buf, "wb" );
+	FILE* fp = fopen ( fname.c_str(), "wb" );
 
-	uchar major = MAJOR_VERSION;
-	uchar minor = MINOR_VERSION;
+	const uchar major = MAJOR_VERSION;
+	const uchar minor = MINOR_VERSION;
 	
-	PERF_PUSH ( "Saving VBX" );	
+	PERF_PUSH ( "Saving VBX" );
 
 	verbosef ( "  Saving VBX (ver %d.%d)\n", major, minor );
 
-	int levels = mPool->getNumLevels();
+	const int levels = mPool->getNumLevels();
 
-	int		num_grids = 1;	
-	char	grid_name[512]; 
-	sprintf( grid_name, "" );	
-	char	grid_components = 1;						// one component
-	char	grid_dtype = 'f';							// float
-	char	grid_compress = 0;							// no compression
-	char	grid_topotype = 2;							// gvdb topology
-	int		grid_reuse = 0;
-	char	grid_layout = 0;							// atlas layout
+	const int	num_grids = 1;
+	const int	grid_name_len = 256; // Length of grid_name
+	char		grid_name[grid_name_len];
+	const char	grid_components = 1;						// one component
+	const char	grid_dtype = 'f';							// float
+	const char	grid_compress = 0;							// no compression
+	const char	grid_topotype = 2;							// gvdb topology
+	const int	grid_reuse = 0;
+	const char	grid_layout = 0;							// atlas layout
 
-	int		leafcnt = mPool->getPoolTotalCnt(0,0);			// brick count
-	int		res = getRes(0);
-	Vector3DI leafdim = Vector3DI(res,res,res);			// brick resolution
-	int		apron	= mPool->getAtlas(0).apron;			// brick apron
-	Vector3DI axiscnt = mPool->getAtlas(0).subdim;		// atlas count
-	Vector3DI axisres = mPool->getAtlasRes(0);			// atlas res	
-	slong	atlas_sz = mPool->getAtlas(0).size;			// atlas size
-	
-	std::vector<uint64>	grid_offs;
-	for (int n=0; n < num_grids; n++)
-		grid_offs.push_back ( 0 );
+	const int		leafcnt = static_cast<int>(mPool->getPoolTotalCnt(0,0));	// brick count
+	const int		num_chan = mPool->getNumAtlas();		// number of channels
+	const int		leafdimX = getRes(0);
+	const Vector3DI leafdim = Vector3DI(leafdimX, leafdimX, leafdimX);	// brick resolution
+	const int		apron	= mPool->getAtlas(0).apron;		// brick apron
+	const Vector3DI axiscnt = mPool->getAtlas(0).subdim;	// atlas count
+	const Vector3DI axisres = mPool->getAtlasRes(0);		// atlas res
+	const Vector3DF voxelsize_deprecated(1, 1, 1);			// world units per voxel
+	const uint64	atlas_sz = mPool->getAtlas(0).size;		// atlas size
 
-	///--- gvdb file header
+	std::vector<uint64>	grid_offs(num_grids, 0); // All values are initially 0
+
+	//--- VBX file header
 	fwrite ( &major, sizeof(uchar), 1, fp );				// major version
 	fwrite ( &minor, sizeof(uchar), 1, fp );				// minor version
 
-	if ((major == 1 && minor == 11) || major > 1) {		
+	if ((major == 1 && minor >= 11) || major > 1) {
 		// GVDB 1.11+ saves grid transforms (GVDB 1.1 and earlier do not)
 		fwrite( &mPretrans.x, sizeof(float), 3, fp);
 		fwrite( &mAngs.x, sizeof(float), 3, fp);
 		fwrite( &mScale.x, sizeof(float), 3, fp);
 		fwrite( &mTrans.x, sizeof(float), 3, fp);
-	}	
+	}
 	
 	fwrite ( &num_grids, sizeof(int), 1, fp );				// number of grids - future expansion
-	uchar use_bitmask = 0;		
-	#ifdef USE_BITMASK	
-		use_bitmask = 1;									
+	
+	// bitmask info
+	uchar use_bitmask = 0;
+	#ifdef USE_BITMASK
+		use_bitmask = 1;
 	#endif
 	if (major >= 2) {
 		fwrite( &use_bitmask, sizeof(uchar), 1, fp );		// bitmask usage (GVDB 2.0 or higher)
 	}
-	uint64 grid_table = ftell ( fp );						// position of grid table
-	for (int n=0; n < num_grids; n++ ) {
-		fwrite ( &grid_offs[n], sizeof(uint64), 1, fp );		// grid offsets (populated later)
-	}
-	int num_chan = mPool->getNumAtlas();
 
-	Vector3DF voxelsize_deprecated(1, 1, 1);
+	//--- grid offset table
+	const long grid_table = ftell ( fp );					// position of grid table in file
+	fwrite(grid_offs.data(), sizeof(uint64), grid_offs.size(), fp); // grid offsets (populated later)
 
 	for (int n=0; n < num_grids; n++ ) {
 		grid_offs[n] = ftell ( fp );						// record grid offset
 
 		//---- grid header
-		fwrite ( &grid_name, 256, 1, fp );					// grid name		
+		fwrite ( &grid_name, 256, 1, fp );					// grid name
 		fwrite ( &grid_dtype, sizeof(uchar), 1, fp );		// grid data type
 		fwrite ( &grid_components, sizeof(uchar), 1, fp );	// grid components
 		fwrite ( &grid_compress, sizeof(uchar), 1, fp );	// grid compression (0=none, 1=blosc, 2=..)
-		fwrite ( &voxelsize_deprecated.x, sizeof(float), 3, fp );		// voxel size
+		fwrite ( &voxelsize_deprecated.x, sizeof(float), 3, fp );	// voxel size
 		fwrite ( &leafcnt, sizeof(int), 1, fp );			// total brick count
 		fwrite ( &leafdim.x, sizeof(int), 3, fp );			// brick dimensions
 		fwrite ( &apron, sizeof(int), 1, fp );				// brick apron
 		fwrite ( &num_chan, sizeof(int), 1, fp );			// number of channels
-		fwrite ( &atlas_sz, sizeof(uint64), 1, fp );			// total atlas size (all channels)
+		fwrite ( &atlas_sz, sizeof(uint64), 1, fp );		// total atlas size (all channels)
 		fwrite ( &grid_topotype, sizeof(uchar), 1, fp );	// topology type? (0=none, 1=reuse, 2=gvdb, 3=..)
 		fwrite ( &grid_reuse, sizeof(int), 1, fp);			// topology reuse
 		fwrite ( &grid_layout, sizeof(uchar), 1, fp);		// brick layout? (0=atlas, 1=brick)
 		fwrite ( &axiscnt.x, sizeof(int), 3, fp );			// atlas axis count
-		fwrite ( &axisres.x, sizeof(int), 3, fp );			// atlas res			
+		fwrite ( &axisres.x, sizeof(int), 3, fp );			// atlas res
 
 		//---- topology section
 		fwrite ( &levels, sizeof(int), 1, fp );				// num levels
-		fwrite ( &mRoot, sizeof(uint64), 1, fp );			// root id	
-		for (int n=0; n < levels; n++ ) {				
-			res = getRes(n); range = getRange(n);			
-			width[0] = mPool->getPoolWidth(0,n);
-			width[1] = mPool->getPoolWidth(1,n);
-			cnt[0] = mPool->getPoolTotalCnt(0,n);
-			cnt[1] = mPool->getPoolTotalCnt(1,n);
+		fwrite ( &mRoot, sizeof(uint64), 1, fp );			// root id
+		for (int n=0; n < levels; n++ ) {
+			const int res = getRes(n);
+			const Vector3DI range = getRange(n);
+			const int width0 = static_cast<int>(mPool->getPoolWidth(0, n));
+			const int width1 = static_cast<int>(mPool->getPoolWidth(1, n));
+			const int cnt0 = static_cast<int>(mPool->getPoolTotalCnt(0, n));
+			const int cnt1 = static_cast<int>(mPool->getPoolTotalCnt(1, n));
 			fwrite ( &mLogDim[n], sizeof(int), 1, fp );
 			fwrite ( &res, sizeof(int), 1, fp );
-			fwrite ( &range.x, sizeof(int), 1, fp );
-			fwrite ( &range.y, sizeof(int), 1, fp );
-			fwrite ( &range.z, sizeof(int), 1, fp );
-			fwrite ( &cnt[0],   sizeof(int), 1, fp );			
-			fwrite ( &width[0], sizeof(int), 1, fp );		
-			fwrite ( &cnt[1],   sizeof(int), 1, fp );
-			fwrite ( &width[1], sizeof(int), 1, fp );			
-		}	
-		for (int n=0; n < levels; n++ )						// write pool 0 
-			mPool->PoolWrite ( fp, 0, n );			
-		for (int n=0; n < levels; n++ )						// write pool 1 
-			mPool->PoolWrite ( fp, 1, n );
+			fwrite ( &range.x, sizeof(int), 3, fp );
+			fwrite ( &cnt0,   sizeof(int), 1, fp );
+			fwrite ( &width0, sizeof(int), 1, fp );
+			fwrite ( &cnt1,   sizeof(int), 1, fp );
+			fwrite ( &width1, sizeof(int), 1, fp );
+		}
+
+		// Write topology
+		for (int n = 0; n < levels; n++) {
+			mPool->PoolWrite(fp, 0, n); // write pool 0
+		}
+		for (int n = 0; n < levels; n++) {
+			mPool->PoolWrite(fp, 1, n); // write pool 1
+		}
 
 		//---- atlas section
-		// readback slice-by-slice from gpu to conserve CPU and GPU mem	
+		// readback slice-by-slice from gpu to conserve CPU and GPU mem
 
 		for (int chan = 0 ; chan < num_chan; chan++ ) {
 			DataPtr slice;
-			int chan_type = mPool->getAtlas(chan).type ;
-			int chan_stride = mPool->getSize ( chan_type ); 
-			uint64 cpos = ftell ( fp );				
+			const int chan_type = mPool->getAtlas(chan).type ;
+			const int chan_stride = mPool->getSize ( chan_type );
 
 			fwrite ( &chan_type, sizeof(int), 1, fp );
 			fwrite ( &chan_stride, sizeof(int), 1, fp );
 			mPool->CreateMemLinear ( slice, 0x0, chan_stride, axisres.x*axisres.y, true );
 
 			for (int z = 0; z < axisres.z; z++ ) {
-				mPool->AtlasRetrieveSlice ( chan, z, slice.size, slice.gpu, (uchar*) slice.cpu );		// transfer from GPU, directly into CPU atlas		
+				mPool->AtlasRetrieveSlice ( chan, z, static_cast<int>(slice.size),
+					slice.gpu, (uchar*) slice.cpu );		// transfer from GPU, directly into CPU atlas		
 				fwrite ( slice.cpu, slice.size, 1, fp );
 			}
 			mPool->FreeMemLinear ( slice );
 		}
 	}
 	// update grid offsets table
-	for (int n=0; n < num_grids; n++ ) {
-		fseek ( fp, 6 + n*sizeof(uint64), SEEK_SET );
-		fwrite ( &grid_offs[n], sizeof(uint64), 1, fp );		// grid offsets
-	}
-		
-	fclose ( fp );	
+	fseek(fp, grid_table, SEEK_SET);
+	fwrite(grid_offs.data(), sizeof(uint64), grid_offs.size(), fp); // grid offsets
+
+	fclose ( fp );
 
 	PERF_POP ();
 
@@ -4313,7 +4314,12 @@ void VolumeGVDB::PrepareRender ( int w, int h, char shading )
 	mScnInfo.camivprow2 = cam->invviewproj_matrix.GetRowVec(2);
 	mScnInfo.camivprow3 = cam->invviewproj_matrix.GetRowVec(3);
 	mScnInfo.bias		= m_bias;
-	mScnInfo.light_pos	= getScene()->getLight()->getPos();
+	// Transform the light position from application space to voxel space,
+	// like getViewPos:
+	nvdb::Vector4DF lightPos4 = getScene()->getLight()->getPos();
+	lightPos4.w = 1.0f; // Since it's a position, not a direction
+	lightPos4 *= mInvXform;
+	mScnInfo.light_pos  = Vector3DF(lightPos4.x, lightPos4.y, lightPos4.z);
 	Vector3DF crs 		= Vector3DF(0,0,0);		
 	mScnInfo.slice_pnt  = getScene()->getSectionPnt();
 	mScnInfo.slice_norm = getScene()->getSectionNorm();

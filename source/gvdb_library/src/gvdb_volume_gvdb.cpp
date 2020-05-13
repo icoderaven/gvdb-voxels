@@ -4375,19 +4375,25 @@ void VolumeGVDB::RenderKernel ( CUfunction user_kernel, uchar chan, uchar rbuf )
 	POP_CTX
 }
 
-void VolumeGVDB::CacheScene(){
+void VolumeGVDB::CacheScene(int id){
 	PUSH_CTX
 	// Create a GPU pointer for this
 	CUdeviceptr gpu_scn_ptr;
-	cudaCheck(cuMemAlloc(&gpu_scn_ptr, sizeof(ScnInfo)), "VolumeGVDB", "CacheScene", "cuMemAlloc", "", false);
+	if(id==-1){	// We just cache the current scene
+		cudaCheck(cuMemAlloc(&gpu_scn_ptr, sizeof(ScnInfo)), "VolumeGVDB", "CacheScene", "cuMemAlloc", "", false);
+	}
+	else{	// We want to update the cached scene
+		gpu_scn_ptr = mCachedScnInfo.at(id);
+	}
 	int width = mRenderBuf[0].stride;
 	int height = mRenderBuf[0].max / width;	
 	PrepareRender ( width, height, getScene()->getShading() );
 	// Copy over scene data to this pointer
 	cudaCheck(cuMemcpyDtoD(gpu_scn_ptr, cuScnInfo, sizeof(ScnInfo)), "VolumeGVDB", "CacheScene", "cuMemcpyDtoD",
               "scene", false);
-	// Add to mCachedScnInfo
-	mCachedScnInfo.push_back(gpu_scn_ptr);
+	if(id==-1){// Add to mCachedScnInfo
+		mCachedScnInfo.push_back(gpu_scn_ptr);
+	}
 	cuCtxSynchronize ();
 	POP_CTX
 }

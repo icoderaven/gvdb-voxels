@@ -365,7 +365,7 @@
 			void Render ( char shade_mode = SHADE_TRILINEAR, uchar in_channel = 0, uchar outbuf = 0 );	
 			void RenderKernel ( CUfunction user_kernel, uchar in_channel = 0, uchar outbuf = 0);			
 			void RenderKernelAtCachedScene(CUfunction user_kernel, uchar chan, uchar rbuf, int scene_id );
-			void CacheScene();
+			void CacheScene(int id=-1);
     	    void Raytrace ( DataPtr rays, uchar chan, char shading, int frame, float bias );
 			char* getDataPtr ( int i, DataPtr dat )		{ return (dat.cpu + (i*dat.stride)); }			
 			

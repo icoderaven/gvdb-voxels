@@ -4614,7 +4614,7 @@ void VolumeGVDB::ComputeKernel ( CUmodule user_module, CUfunction user_kernel, u
 	// Determine grid and block dims (must match atlas bricks)	
 	Vector3DI block ( 8, 8, 8 );
 	Vector3DI res = mPool->getAtlasRes( chan );
-	Vector3DI grid ( int(res.x/block.x)+1, int(res.y/block.y)+1, int(res.z/block.z)+1 );	
+	Vector3DI grid = mPool->getAtlasCnt( chan);	// Iterate for number of bricks, compute kernel doesn't need to work on apron voxels
 
 	void* args[3] = { &cuVDBInfo, &res, &chan };
 	cudaCheck ( cuLaunchKernel ( user_kernel, grid.x, grid.y, grid.z, block.x, block.y, block.z, 0, NULL, args, NULL ), 
@@ -4645,7 +4645,7 @@ void VolumeGVDB::Compute ( int effect, uchar chan, int iter, Vector3DF parm, boo
 	// Determine grid and block dims (must match atlas bricks)	
 	Vector3DI block ( 8, 8, 8 );
 	Vector3DI res = mPool->getAtlasRes( chan );
-	Vector3DI grid ( int(res.x/block.x)+1, int(res.y/block.y)+1, int(res.z/block.z)+1 );	
+	Vector3DI grid = mPool->getAtlasCnt( chan);
 
 	void* args[6] = { &cuVDBInfo, &res, &chan, &parm.x, &parm.y, &parm.z };
 	

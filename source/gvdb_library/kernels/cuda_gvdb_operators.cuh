@@ -119,32 +119,25 @@ __device__ void UpdateApron(VDBInfo* gvdb, const uchar channel, const int brickC
 	// sampling the value at that index
 	T value;
 	
-		float3 worldPos;
-		if (!getAtlasToWorld(gvdb, atlasVoxel, worldPos)) return;
-		float3 offs, vmin, vdel; uint64 nodeID;
-		VDBNode* node = getNodeAtPoint(gvdb, worldPos, &offs, &vmin, &vdel, &nodeID);
+	float3 worldPos;
+	if (!getAtlasToWorld(gvdb, atlasVoxel, worldPos)) return;
+	float3 offs, vmin, vdel; uint64 nodeID;
+	VDBNode* node = getNodeAtPoint(gvdb, worldPos, &offs, &vmin, &vdel, &nodeID);
 
-		if (node == 0x0) {
-			// Out of range, use the boundary value
-			value = boundaryValue;
-		}
-		else {
-			offs += (worldPos - vmin) / vdel; // Get the atlas position
-			value = tex3D<T>(gvdb->volIn[channel], offs.x, offs.y, offs.z);
-		}
-	
+	if (node == 0x0) {
+		// Out of range, use the boundary value
+		value = boundaryValue;
+	}
+	else {
+		offs += (worldPos - vmin) / vdel; // Get the atlas position
+		value = tex3D<T>(gvdb->volIn[channel], offs.x, offs.y, offs.z);
+	}
 
 	if(gvdb->use_tex_mem[channel]){
 		surf3Dwrite(value, gvdb->volOut[channel], atlasVoxel.x * sizeof(T), atlasVoxel.y, atlasVoxel.z);
 	}
 	else{
-				// if(blockIdx.x ==0 && blockIdx.y == 0 && threadIdx.x == 0 && threadIdx.y == 0 && threadIdx.z == 0){
-		// 	printf("Brick id is %d, temp is %d %d %d\n", brk, temp.x, temp.y, temp.z);
-		// }
-		// if(brk == 0 && side == 3 && node != 0x0){
 
-		// 	printf("temp:%u %u %u vox: %u %u %u brickres %d wpos: %f %f %f offs: %f %f %f\n", temp.x, temp.y, temp.z, vox.x, vox.y, vox.z, brickres, wpos.x, wpos.y, wpos.z, offs.x, offs.y, offs.z);
-		// }
 		int3 res = gvdb->atlas_res;
 		unsigned long int atlas_id = static_cast<uint>(offs.z) * (res.x*res.y) + static_cast<uint>(offs.y) * res.x + static_cast<uint>(offs.x) ;
 		T *atlas_mem = (T *) (gvdb->atlas_dev_mem[channel]) + atlas_id;
@@ -242,8 +235,9 @@ extern "C" __global__ void gvdbUpdateApronC4 ( VDBInfo* gvdb, uchar chan, int br
 	}																						\
 	__syncthreads ();
 
+// Again, assuming that the brick is 8x8x8 and apron is of size 1
 #define GVDB_VOX																								\
-	uint3 vox = blockIdx * make_uint3(blockDim.x, blockDim.y, blockDim.z) + threadIdx + make_uint3(1,1,1);		\
+	uint3 vox = blockIdx * make_uint3(blockDim.x+2, blockDim.y+2, blockDim.z+2) + threadIdx + make_uint3(1,1,1);		\
 	if ( vox.x >= res.x|| vox.y >= res.y || vox.z >= res.z ) return;
 
 
@@ -396,10 +390,9 @@ extern "C" __global__ void gvdbOpFillF  ( VDBInfo* gvdb, int3 res, uchar chan, f
 			surf3Dwrite ( p1, gvdb->volOut[chan], vox.x*sizeof(float), vox.y, vox.z );
 		}
 		else{
-			uint3 vox_fixed = vox - make_uint3(1, 1, 1);
 			int3 atlas_res = gvdb->atlas_res;
-			unsigned long int atlas_id = vox_fixed.z * atlas_res.x * atlas_res.y +
-                               vox_fixed.y * atlas_res.x + vox_fixed.x;
+			unsigned long int atlas_id = vox.z * atlas_res.x * atlas_res.y +
+                               vox.y * atlas_res.x + vox.x;
 			float* atlas_mem = (float*)(gvdb->atlas_dev_mem[chan]) + atlas_id;
 			*atlas_mem = p1;
 		}

@@ -139,6 +139,7 @@ __device__ void UpdateApron(VDBInfo* gvdb, const uchar channel, const int brickC
 	else{
 
 		int3 res = gvdb->atlas_res;
+		// Cast to int because the worldpos added a 0.5 to the index space
 		unsigned long int atlas_id = static_cast<uint>(offs.z) * (res.x*res.y) + static_cast<uint>(offs.y) * res.x + static_cast<uint>(offs.x) ;
 		T *atlas_mem = (T *) (gvdb->atlas_dev_mem[channel]) + atlas_id;
 		if(node!=0x0) {

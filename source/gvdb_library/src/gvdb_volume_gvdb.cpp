@@ -4420,7 +4420,7 @@ void VolumeGVDB::RenderKernelAtCachedScene(CUfunction user_kernel, uchar chan, u
 	int height = mRenderBuf[rbuf].max / width;	
 
 	// Copy scn data to global pointer from cached GPU ScnInfo pointer
-	cudaCheck( cuMemcpyDtoD(cuScnInfo, mCachedScnInfo[scene_id], sizeof(ScnInfo)), "VolumeGVDB", "RenderKernelAtCachedScene", "cuMemcpyDtoD", "cuScnInfo", mbDebug);
+	cudaCheck( cuMemcpyDtoD(cuScnInfo, mCachedScnInfo.at(scene_id), sizeof(ScnInfo)), "VolumeGVDB", "RenderKernelAtCachedScene", "cuMemcpyDtoD", "cuScnInfo", mbDebug);
 
 	// Send VDB Info & Atlas
 	PrepareVDB ();											
@@ -4554,7 +4554,7 @@ void VolumeGVDB::UpdateApron ( uchar chan, float boundval, bool changeCtx)
 	void* args[6] = { &cuVDBInfo, &chan, &bricks, &brickres, &brickwid, &boundval };
 	cudaCheck(cuLaunchKernel(cuFunc[kern], grid.x, grid.y, grid.z, block.x, block.y, block.z, 0, NULL, args, NULL), 
 				"VolumeGVDB", "UpdateApron", "cuLaunch", typ, mbDebug);
-
+	cuCtxSynchronize();
 
 	if (changeCtx) { POP_CTX }
 }

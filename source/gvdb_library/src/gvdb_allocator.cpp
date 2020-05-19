@@ -414,35 +414,33 @@ void Allocator::AllocateTextureGPU ( DataPtr& p, uchar dtype, Vector3DI res, boo
 			// printf("Allocating tex memory of size %u bytes\n", p.size);
 			cudaCheck ( cuArray3DCreate( &p.garray, &desc), "Allocator", "AllocateTextureGPU", "cuArray3DCreate", "", mbDebug);
             
-            CUDA_RESOURCE_DESC resDesc = {};
-            resDesc.resType = CU_RESOURCE_TYPE_ARRAY;
-            resDesc.res.array.hArray = p.garray;
+			CUDA_RESOURCE_DESC resDesc = {};
+			resDesc.resType = CU_RESOURCE_TYPE_ARRAY;
+			resDesc.res.array.hArray = p.garray;
 
-            cudaCheck(cuSurfObjectCreate(&p.surf_obj, &resDesc), "Allocator", "AllocateTextureGPU", "cuSurfObjectCreate", "", mbDebug);
+			cudaCheck(cuSurfObjectCreate(&p.surf_obj, &resDesc), "Allocator", "AllocateTextureGPU", "cuSurfObjectCreate", "", mbDebug);
 
-            CUDA_RESOURCE_DESC surfReadDesc = {};
-            surfReadDesc.resType = CU_RESOURCE_TYPE_ARRAY;
-            surfReadDesc.res.array.hArray = reinterpret_cast<CUarray>(p.garray);
+			CUDA_RESOURCE_DESC surfReadDesc = {};
+			surfReadDesc.resType = CU_RESOURCE_TYPE_ARRAY;
+			surfReadDesc.res.array.hArray = reinterpret_cast<CUarray>(p.garray);
 
-            CUDA_TEXTURE_DESC texReadDesc = {};
-            texReadDesc.addressMode[0] = CU_TR_ADDRESS_MODE_CLAMP;
-            texReadDesc.addressMode[1] = CU_TR_ADDRESS_MODE_CLAMP;
-            texReadDesc.addressMode[2] = CU_TR_ADDRESS_MODE_CLAMP;
+			CUDA_TEXTURE_DESC texReadDesc = {};
+			texReadDesc.addressMode[0] = CU_TR_ADDRESS_MODE_CLAMP;
+			texReadDesc.addressMode[1] = CU_TR_ADDRESS_MODE_CLAMP;
+			texReadDesc.addressMode[2] = CU_TR_ADDRESS_MODE_CLAMP;
 
-            texReadDesc.filterMode = CU_TR_FILTER_MODE_POINT;
+			texReadDesc.filterMode = CU_TR_FILTER_MODE_POINT;
 
-            cudaCheck(cuTexObjectCreate(&p.tex_obj, &surfReadDesc, &texReadDesc, nullptr), "Allocator", "AllocateTextureGPU", "cuGraphicsUnmapResources", "", mbDebug);
-            
-            if ( preserve > 0 && old_array != 0 ) {
-				
-				// Clear channel to init_val.x
-				Vector3DI block ( 8, 8, 8 );
-				Vector3DI grid ( int(res.x/block.x)+1, int(res.y/block.y)+1, int(res.z/block.z)+1 );	
+			cudaCheck(cuTexObjectCreate(&p.tex_obj, &surfReadDesc, &texReadDesc, nullptr), "Allocator", "AllocateTextureGPU", "cuGraphicsUnmapResources", "", mbDebug);
+			// Clear channel to init_val.x
+			Vector3DI block ( 8, 8, 8 );
+			Vector3DI grid ( int(res.x/block.x)+1, int(res.y/block.y)+1, int(res.z/block.z)+1 );	
 
-				int dsize = getSize( p.type );
-				void* args[4] = { &res, &dsize, &p.surf_obj, &init_val.x };
-				cudaCheck ( cuLaunchKernel ( cuFillTex, grid.x, grid.y, grid.z, block.x, block.y, block.z, 0, mStream, args, NULL ), "Allocator", "AllocateTextureGPU", "cuLaunch", "cuFillTex", mbDebug);
+			int dsize = getSize( p.type );
+			void* args[4] = { &res, &dsize, &p.surf_obj, &init_val.x };
+			cudaCheck ( cuLaunchKernel ( cuFillTex, grid.x, grid.y, grid.z, block.x, block.y, block.z, 0, mStream, args, NULL ), "Allocator", "AllocateTextureGPU", "cuLaunch", "cuFillTex", mbDebug);
 
+			if ( preserve > 0 && old_array != 0 ) {
 				// Copy over preserved data
 				CUDA_MEMCPY3D cp = {0};
 				cp.dstMemoryType = CU_MEMORYTYPE_ARRAY;
@@ -455,7 +453,6 @@ void Allocator::AllocateTextureGPU ( DataPtr& p, uchar dtype, Vector3DI res, boo
 				if ( cp.Depth < desc.Depth )
 				   cudaCheck ( cuMemcpy3D ( &cp ), "Allocator", "AllocateTextureGPU", "cuMemcpy3D", "preserve", mbDebug);
 			}
-
 		} else {
 			p.garray = 0;
 		}
@@ -492,7 +489,7 @@ void Allocator::AllocateAtlasMemGPU(DataPtr& p, uchar dtype, Vector3DI res, bool
       // Set channel to init_val
       // TODO: Deal with other data types other than floats
       // reinterpret_cast required because of function signature
-      cudaCheck(cuMemsetD32(p.gpu, reinterpret_cast<int&>(init_val.x), p.size / sizeof(float)), "Allocator", "AllocateAtlasMemGPU", "cuMemset", "", mbDebug);
+      cudaCheck(cuMemsetD32(p.gpu, *(reinterpret_cast<unsigned int *>(&init_val.x)), p.size / sizeof(float)), "Allocator", "AllocateAtlasMemGPU", "cuMemset", "", mbDebug);
       if (preserve > 0 && old_array != 0) {
         // Copy over preserved data
         if (preserve > p.size) {

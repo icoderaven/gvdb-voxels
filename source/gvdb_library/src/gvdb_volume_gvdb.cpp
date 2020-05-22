@@ -1171,6 +1171,40 @@ void VolumeGVDB::AccumulateTopology(int pNumPnts, float pRadius, Vector3DF pOrig
 		RebuildTopology ( pNumPnts, pRadius, pOrig );
 		return;
 	}
+	if(depth > mCurrDepth){
+		gprintf("Warning: Adding points will cause depth change in topology. Updating accordingly...\n");
+		// We need to reparent the topology so as to accommodate the incoming data
+		// 1. Get current root node
+		if(mRoot == ID_UNDEFL){
+			gprintf("No root exists! Call rebuildtopology instead!!!\n");
+			return;
+		}
+		
+		Node *currRoot = getNode(mRoot);
+		uint64 parent = currRoot->mParent;
+		bool bNew = false;
+		if(parent == ID_UNDEFL){
+			parent = Reparent ( currRoot->mLev, mRoot, rootPos, bNew );	// make make new lev0 nodes
+			if ( parent == ID_UNDEFL ){
+				gprintf("Could not reparent!!!!!\n");
+				return;
+			}
+		}
+		gprintf("Reparenting done!!\n");
+		mCurrDepth = depth;
+		// Now this is done on the CPU, we need to send this over to the GPU pointers...
+		mPool->PoolCommitAll();
+		PrepareVDBPartially();
+		// All should be good, resume with activating incremental brick
+		mPool->PoolFetchAll();
+		// Update range since we just changed the max levels value
+		PrepareAux ( AUX_RANGE_RES, depth, sizeof(int), true, true );
+		int* range_res = (int*) mAux[AUX_RANGE_RES].cpu;
+		for (int lev = 0; lev < depth; lev++)
+			range_res[lev] = getRange(lev).x;
+
+		CommitData ( mAux[AUX_RANGE_RES] );	
+	}
 	ActivateIncreBricksGPU(pNumPnts, pRadius, pOrig, depth, rootPos, true );	
 }
 

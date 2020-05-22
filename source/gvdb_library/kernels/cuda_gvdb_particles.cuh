@@ -450,7 +450,8 @@ extern "C" __global__ void gvdbCalcIncreExtraBrickId (VDBInfo* gvdb, float radiu
 	int3 bmax = make_int3(int(wpos.x) + radius, int(wpos.y) + radius, int(wpos.z) + radius); 
 
 	int3 ndPos;
-	int pnodeId, idx;
+	int idx;
+	uint64 pnodeId;
 	VDBNode* node;
 	//unsigned short levxyx[40];
 	//int ndCnt = 0;

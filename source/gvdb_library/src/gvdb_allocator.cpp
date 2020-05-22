@@ -1076,7 +1076,7 @@ void Allocator::PoolWrite ( FILE* fp, uchar grp, uchar lev )
 void Allocator::PoolRead ( FILE* fp, uchar grp, uchar lev, int cnt, int wid )
 {
 	char* dat = getPoolCPU (grp,lev );
-	fread ( dat, wid, cnt, fp );
+	if(fread ( dat, wid, cnt, fp ));
 
 	mPool[grp][lev].usedNum = cnt;
 	mPool[grp][lev].lastEle = cnt;
@@ -1090,7 +1090,7 @@ void Allocator::AtlasWrite ( FILE* fp, uchar chan )
 
 void Allocator::AtlasRead ( FILE* fp, uchar chan, uint64 asize )
 {
-	fread ( mAtlas[chan].cpu, asize, 1, fp );
+	if(fread ( mAtlas[chan].cpu, asize, 1, fp ));
 }
 #include <assert.h>
 
@@ -1144,7 +1144,7 @@ void StartCuda ( int devsel, CUcontext ctxsel, CUdevice& dev, CUcontext& ctx, CU
 	cuDeviceGetCount ( &cnt );
 	if (cnt == 0) {
 		gprintf("ERROR: No CUDA devices found.\n");
-		dev = NULL; ctx = NULL;
+		dev = CU_DEVICE_INVALID; ctx = NULL;
 		gerror();
 		return;
 	}	

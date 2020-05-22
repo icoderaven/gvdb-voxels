@@ -94,7 +94,7 @@ VolumeGVDB::VolumeGVDB ()
 {
 	TimeX start;
 	
-	mDevice = NULL;
+	mDevice = CU_DEVICE_INVALID;
 	mContext = NULL;
 	mStream = NULL;
 	mPool = 0x0;
@@ -541,8 +541,8 @@ bool VolumeGVDB::LoadVBX(const std::string fname, int force_maj, int force_min)
 	std::vector<uint64> grid_offs;
 
 	//--- VBX file header
-	fread (&major, sizeof(uchar), 1, fp);					// major version
-	fread (&minor, sizeof(uchar), 1, fp);					// minor version
+	if(fread (&major, sizeof(uchar), 1, fp));					// major version
+	if(fread (&minor, sizeof(uchar), 1, fp));					// minor version
 
 	if (force_maj > 0 || force_min > 0) {
 		major = force_maj;
@@ -554,14 +554,14 @@ bool VolumeGVDB::LoadVBX(const std::string fname, int force_maj, int force_min)
 
 	if ((major == 1 && minor >= 11) || major > 1) {
 		// GVDB >=1.11+ saves grid transforms (GVDB 1.1 and earlier do not)
-		fread( &mPretrans, sizeof(float), 3, fp);
-		fread( &mAngs, sizeof(float), 3, fp);
-		fread( &mScale, sizeof(float), 3, fp);
-		fread( &mTrans, sizeof(float), 3, fp);
+		if(fread( &mPretrans, sizeof(float), 3, fp));
+		if(fread( &mAngs, sizeof(float), 3, fp));
+		if(fread( &mScale, sizeof(float), 3, fp));
+		if(fread( &mTrans, sizeof(float), 3, fp));
 		SetTransform(mPretrans, mScale, mAngs, mTrans);		// set grid transform
 	}
 
-	fread ( &num_grids, sizeof(int), 1, fp );				// number of grids
+	if(fread ( &num_grids, sizeof(int), 1, fp ));				// number of grids
 
 	// bitmask info
 	uchar use_masks = 0; // Whether the read volume should use bitmasks
@@ -571,7 +571,7 @@ bool VolumeGVDB::LoadVBX(const std::string fname, int force_maj, int force_min)
 	uchar read_masks = 0; // Whether the VBX file uses bitmasks
 	if (major >= 2) {
 		// GVDB >= 2, bitmasks optional 
-		fread(&read_masks, sizeof(uchar), 1, fp);
+		if(fread(&read_masks, sizeof(uchar), 1, fp));
 	}
 	else if (major == 1 && minor == 0) {
 		// GVDB 1.0 always uses bitmasks
@@ -581,41 +581,41 @@ bool VolumeGVDB::LoadVBX(const std::string fname, int force_maj, int force_min)
 	//--- grid offset table
 	for (int n=0; n < num_grids; n++ ) {
 		grid_offs.push_back(0);
-		fread ( &grid_offs[n], sizeof(uint64), 1, fp );		// grid offsets
+		if(fread ( &grid_offs[n], sizeof(uint64), 1, fp ));		// grid offsets
 	}
 
 	for (int n = 0; n < num_grids; n++) {
 
 		//---- grid header
-		fread(&grid_name, 256, 1, fp);					// grid name
-		fread(&grid_dtype, sizeof(uchar), 1, fp);		// grid data type
-		fread(&grid_components, sizeof(uchar), 1, fp);	// grid components
-		fread(&grid_compress, sizeof(uchar), 1, fp);	// grid compression (0=none, 1=blosc, 2=..)
-		fread(&voxelsize_deprecated, sizeof(float), 3, fp);	// voxel size
-		fread(&leafcnt, sizeof(int), 1, fp);			// total brick count
-		fread(&leafdim.x, sizeof(int), 3, fp);			// brick dimensions
-		fread(&apron, sizeof(int), 1, fp);				// brick apron
-		fread(&num_chan, sizeof(int), 1, fp);			// number of channels
-		fread(&atlas_sz, sizeof(uint64), 1, fp);		// total atlas size (all channels)
-		fread(&grid_topotype, sizeof(uchar), 1, fp);	// topology type? (0=none, 1=reuse, 2=gvdb, 3=..)
-		fread(&grid_reuse, sizeof(int), 1, fp);			// topology reuse
-		fread(&grid_layout, sizeof(uchar), 1, fp);		// brick layout? (0=atlas, 1=brick)
-		fread(&axiscnt.x, sizeof(int), 3, fp);			// atlas brick count
-		fread(&axisres.x, sizeof(int), 3, fp);			// atlas res
+		if(fread(&grid_name, 256, 1, fp));					// grid name
+		if(fread(&grid_dtype, sizeof(uchar), 1, fp));		// grid data type
+		if(fread(&grid_components, sizeof(uchar), 1, fp));	// grid components
+		if(fread(&grid_compress, sizeof(uchar), 1, fp));	// grid compression (0=none, 1=blosc, 2=..)
+		if(fread(&voxelsize_deprecated, sizeof(float), 3, fp));	// voxel size
+		if(fread(&leafcnt, sizeof(int), 1, fp));			// total brick count
+		if(fread(&leafdim.x, sizeof(int), 3, fp));			// brick dimensions
+		if(fread(&apron, sizeof(int), 1, fp));				// brick apron
+		if(fread(&num_chan, sizeof(int), 1, fp));			// number of channels
+		if(fread(&atlas_sz, sizeof(uint64), 1, fp));		// total atlas size (all channels)
+		if(fread(&grid_topotype, sizeof(uchar), 1, fp));	// topology type? (0=none, 1=reuse, 2=gvdb, 3=..)
+		if(fread(&grid_reuse, sizeof(int), 1, fp));			// topology reuse
+		if(fread(&grid_layout, sizeof(uchar), 1, fp));		// brick layout? (0=atlas, 1=brick)
+		if(fread(&axiscnt.x, sizeof(int), 3, fp));			// atlas brick count
+		if(fread(&axisres.x, sizeof(int), 3, fp));			// atlas res
 
 		//---- topology section
-		fread(&levels, sizeof(int), 1, fp);				// num levels
-		fread(&root, sizeof(uint64), 1, fp);			// root id
+		if(fread(&levels, sizeof(int), 1, fp));				// num levels
+		if(fread(&root, sizeof(uint64), 1, fp));			// root id
 		for (int n = 0; n < levels; n++) {
-			fread(&ld[n], sizeof(int), 1, fp);
-			fread(&res[n], sizeof(int), 1, fp);
-			fread(&range[n].x, sizeof(int), 1, fp);
-			fread(&range[n].y, sizeof(int), 1, fp);
-			fread(&range[n].z, sizeof(int), 1, fp);
-			fread(&cnt0[n], sizeof(int), 1, fp);
-			fread(&width0[n], sizeof(int), 1, fp);
-			fread(&cnt1[n], sizeof(int), 1, fp);
-			fread(&width1[n], sizeof(int), 1, fp);
+			if(fread(&ld[n], sizeof(int), 1, fp));
+			if(fread(&res[n], sizeof(int), 1, fp));
+			if(fread(&range[n].x, sizeof(int), 1, fp));
+			if(fread(&range[n].y, sizeof(int), 1, fp));
+			if(fread(&range[n].z, sizeof(int), 1, fp));
+			if(fread(&cnt0[n], sizeof(int), 1, fp));
+			if(fread(&width0[n], sizeof(int), 1, fp));
+			if(fread(&cnt1[n], sizeof(int), 1, fp));
+			if(fread(&width1[n], sizeof(int), 1, fp));
 		}
 		if (width0[0] != sizeof(nvdb::Node)) {
 			gprintf("ERROR: VBX file contains nodes incompatible with current gvdb_library.\n");
@@ -649,8 +649,8 @@ bool VolumeGVDB::LoadVBX(const std::string fname, int force_maj, int force_min)
 		// Read atlas into GPU slice-by-slice to conserve CPU and GPU mem
 		for (int chan = 0 ; chan < num_chan; chan++ ) {
 			int chan_type, chan_stride;
-			fread ( &chan_type, sizeof(int), 1, fp );
-			fread ( &chan_stride, sizeof(int), 1, fp );
+			if(fread ( &chan_type, sizeof(int), 1, fp ));
+			if(fread ( &chan_stride, sizeof(int), 1, fp ));
 
 			AddChannel ( chan, chan_type, apron, F_LINEAR, F_BORDER, axiscnt );		// provide axiscnt
 
@@ -659,7 +659,7 @@ bool VolumeGVDB::LoadVBX(const std::string fname, int force_maj, int force_min)
 			DataPtr slice;
 			mPool->CreateMemLinear ( slice, 0x0, chan_stride, axisres.x*axisres.y, true );
 			for (int z = 0; z < axisres.z; z++ ) {
-				fread ( slice.cpu, slice.size, 1, fp );
+				if(fread ( slice.cpu, slice.size, 1, fp ));
 				mPool->AtlasWriteSlice ( chan, z, static_cast<int>(slice.size),
 					slice.gpu, (uchar*) slice.cpu );		// transfer from GPU, directly into CPU atlas				
 			}
@@ -1941,20 +1941,20 @@ bool VolumeGVDB::LoadBRK ( std::string fname )
 	
 	PERF_PUSH ( buf );	
 	
-	fread ( &brkcnt, sizeof(int), 1, fp );
+	if(fread ( &brkcnt, sizeof(int), 1, fp ));
 	verbosef ( "    Number of bricks: %d\n", brkcnt );
 
 	// Read first brick for res
-	fread ( &bndx, sizeof(Vector3DI), 1, fp );
-	fread ( &bmin, sizeof(Vector3DF), 1, fp );
-	fread ( &bmax, sizeof(Vector3DF), 1, fp );
-	fread ( &bres, sizeof(Vector3DI), 1, fp );		// needed to create atlas
+	if(fread ( &bndx, sizeof(Vector3DI), 1, fp ));
+	if(fread ( &bmin, sizeof(Vector3DF), 1, fp ));
+	if(fread ( &bmax, sizeof(Vector3DF), 1, fp ));
+	if(fread ( &bres, sizeof(Vector3DI), 1, fp ));		// needed to create atlas
 	bcurr = bres;
 	if ( brick != 0x0 ) free ( brick );
 	brick = (float*) malloc ( bres.x*bres.y*bres.z * sizeof(float) );	// allocate brick memory
 	vtemp.Resize ( T_FLOAT, bres, 0x0, false );
 	fseek ( fp, 0, SEEK_SET );
-	fread ( &brkcnt, sizeof(int), 1, fp );
+	if(fread ( &brkcnt, sizeof(int), 1, fp ));
 
 	// Adjust VDB config if necessary	
 	int res = bres.x;
@@ -1985,16 +1985,16 @@ bool VolumeGVDB::LoadBRK ( std::string fname )
 		
 		// Read brick dimensions
 		PERF_START ();
-		fread ( &bndx, sizeof(Vector3DI), 1, fp );
-		fread ( &bmin, sizeof(Vector3DF), 1, fp );
-		fread ( &bmax, sizeof(Vector3DF), 1, fp );
-		fread ( &bres, sizeof(Vector3DI), 1, fp );		
+		if(fread ( &bndx, sizeof(Vector3DI), 1, fp ));
+		if(fread ( &bmin, sizeof(Vector3DF), 1, fp ));
+		if(fread ( &bmax, sizeof(Vector3DF), 1, fp ));
+		if(fread ( &bres, sizeof(Vector3DI), 1, fp ));		
 		if ( bcurr.x != bres.x || bcurr.y != bres.y || bcurr.z != bres.z ) {
 			gprintf ( "ERROR: Bricks do not have same resolution.\n" );
 			exit (-1);
 		}
 		// Read brick
-		fread ( brick, sizeof(float), bres.x*bres.y*bres.z, fp );
+		if(fread ( brick, sizeof(float), bres.x*bres.y*bres.z, fp ));
 		t.x += PERF_STOP ();
 
 		// Activate space
@@ -4380,7 +4380,7 @@ void VolumeGVDB::PrepareRender ( int w, int h, char shading )
 	// Depth buffer
 	// mScnInfo.outbuf		= (getScene()->getBuf())-1;			// NOT USED  (was mRenderBuf[0].gpu;)
 	int dbuf = getScene()->getDepthBuf();
-	mScnInfo.dbuf 		= (dbuf == 255 ? NULL : mRenderBuf[dbuf].gpu);	
+	mScnInfo.dbuf 		= (dbuf == 255 ? 0 : mRenderBuf[dbuf].gpu);	
 	mScnInfo.dir_vec	= cam->dir_vec;
 
 	cudaCheck ( cuMemcpyHtoD ( cuScnInfo, &mScnInfo, sizeof(ScnInfo) ), "VolumeGVDB", "PrepareRender", "cuMemcpyHtoD", "cuScnInfo", mbDebug);
@@ -5093,6 +5093,8 @@ void VolumeGVDB::PrepareAux ( int id, size_t cnt, int stride, bool bZero, bool b
 	}
 	if ( bZero ) {
 		cudaCheck ( cuMemsetD8 ( mAux[id].gpu, 0, mAux[id].size ), "VolumeGVDB", "PrepareAux", "cuMemsetD8", "", mbDebug);
+		if(bCPU)
+			memset(mAux[id].cpu, 0,  mAux[id].size);
 	}
 	POP_CTX
 }
@@ -5765,7 +5767,7 @@ void VolumeGVDB::ScatterDensity ( int num_pnts, float radius, float amp, Vector3
 	int threads = 256;		
 	int pblks = int(num_pnts / threads)+1;	
 	
-    if (mAux[AUX_PNTCLR].gpu != NULL && avgColor) {
+    if (mAux[AUX_PNTCLR].gpu != 0 && avgColor) {
 		Vector3DI brickResVec = getRes3DI(0);
 		num_voxels = brickResVec.x * brickResVec.y * brickResVec.z * getNumUsedNodes(0);
 		if (mbProfile) PERF_PUSH("Prepare Aux");
@@ -5777,7 +5779,7 @@ void VolumeGVDB::ScatterDensity ( int num_pnts, float radius, float amp, Vector3
 	cudaCheck ( cuLaunchKernel ( cuFunc[FUNC_SCATTER_DENSITY], pblks, 1, 1, threads, 1, 1, 0, NULL, args, NULL ), 
 				"VolumeGVDB", "ScatterPointDensity", "cuLaunch", "FUNC_SCATTER_DENSITY", mbDebug);		
 
-	if (mAux[AUX_PNTCLR].gpu != NULL && avgColor) {
+	if (mAux[AUX_PNTCLR].gpu != 0 && avgColor) {
 		int threads_avgcol = 256;
 		int pblks_avgcol = int(num_voxels / threads_avgcol) + 1;
 		void* args_avgcol[2] = { &num_voxels, &mAux[AUX_COLAVG].gpu };

@@ -213,7 +213,7 @@ char *ReadShaderSource( char *fileName )
 	fseek( fp, 0L, SEEK_SET );
 	char *buf = (char *) malloc( fileSz+1 );
 	if (!buf) { fclose(fp); return NULL; }
-	fread( buf, 1, fileSz, fp );
+	if(fread( buf, 1, fileSz, fp ));
 	buf[fileSz] = '\0';
 	fclose( fp );
 	return buf;
@@ -622,31 +622,53 @@ bool Scene::DoAnimation ( int frame )
 	return anim;
 }
 
+#define STR2ID(str) \
+			 (static_cast<unsigned long>(str[0]) << 24) | \
+			 (static_cast<unsigned long>(str[1]) << 16) | \
+		   (static_cast<unsigned long>(str[2]) << 8) | \
+		   (static_cast<unsigned long>(str[3]) )
+
+#define LOOK STR2ID("look")
+#define EYE  STR2ID("eye ")
+#define NEAR STR2ID("near")
+#define FAR  STR2ID("far ")
+#define FOV  STR2ID("fov ")
+#define DIST STR2ID("dist")
+#define ANGS STR2ID("angs")
+#define LOOK STR2ID("look")
+#define POS  STR2ID("pos ")
+#define NEAR STR2ID("near")
+#define FAR  STR2ID("far ")
+#define FOV  STR2ID("fov ")
+#define DIST STR2ID("dist")
+#define ANGS STR2ID("angs")
+
+
 void Scene::UpdateValue ( char obj, int objid, long varid, Vector3DF val )
 {
 	if ( obj=='C' ) {
 		// Camera			
 		Camera3D* cam = getCamera();
 		switch ( varid ) {
-		case 'look': cam->setToPos ( val.x, val.y, val.z );		break;
-		case 'eye ': cam->setPos ( val.x, val.y, val.z );		break;		
-		case 'near': cam->setNearFar ( val.x, cam->getFar());	break;
-		case 'far ': cam->setNearFar ( cam->getNear(), val.x );	break;				
-		case 'fov ': cam->setFov ( val.x );						break;
-		case 'dist': cam->setDist ( val.x );					break;
-		case 'angs': cam->setOrbit ( val, cam->getToPos(), cam->getOrbitDist(), cam->getOrbitDist() );	break;		
+		case LOOK : cam->setToPos ( val.x, val.y, val.z );		break;
+		case EYE  : cam->setPos ( val.x, val.y, val.z );		break;		
+		case NEAR : cam->setNearFar ( val.x, cam->getFar());	break;
+		case FAR  : cam->setNearFar ( cam->getNear(), val.x );	break;				
+		case FOV  : cam->setFov ( val.x );						break;
+		case DIST : cam->setDist ( val.x );					break;
+		case ANGS : cam->setOrbit ( val, cam->getToPos(), cam->getOrbitDist(), cam->getOrbitDist() );	break;		
 		};
 	} else if ( obj=='L' ) {
 		// Light
 		Light* light = getLight();
 		switch ( varid ) {
-		case 'look': light->setToPos ( val.x, val.y, val.z );	break;
-		case 'pos ': light->setPos ( val.x, val.y, val.z );		break;
-		case 'near': light->setNearFar ( val.x, light->getFar());	break;
-		case 'far ': light->setNearFar ( light->getNear(), val.x );	break;		
-		case 'fov ': light->setFov ( val.x );					break;
-		case 'dist': light->setDist ( val.x );					break;
-		case 'angs': light->setOrbit ( val, light->getToPos(), light->getOrbitDist(), light->getOrbitDist() );	break;		
+		case LOOK : light->setToPos ( val.x, val.y, val.z );	break;
+		case POS  : light->setPos ( val.x, val.y, val.z );		break;
+		case NEAR : light->setNearFar ( val.x, light->getFar());	break;
+		case FAR  : light->setNearFar ( light->getNear(), val.x );	break;		
+		case FOV  : light->setFov ( val.x );					break;
+		case DIST : light->setDist ( val.x );					break;
+		case ANGS : light->setOrbit ( val, light->getToPos(), light->getOrbitDist(), light->getOrbitDist() );	break;		
 		};			
 	} else if ( obj=='S' ) {
 		// Shadows

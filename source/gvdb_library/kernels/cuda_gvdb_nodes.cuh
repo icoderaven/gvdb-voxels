@@ -32,7 +32,7 @@
 #define ID_UNDEFL	0xFFFFFFFF
 #define ID_UNDEF64	0xFFFFFFFFFFFFFFFF
 #define CHAN_UNDEF	255
-#define MAX_CHANNEL  32
+#define MAX_CHANNEL  128
 
 struct ALIGN(16) VDBNode {
 	uchar		mLev;			// Level		Max = 255			1 byte

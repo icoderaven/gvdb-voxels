@@ -101,7 +101,7 @@
 	#define F_WRAP			2
 	
 
-	#define MAX_CHANNEL		32
+	#define MAX_CHANNEL		128
 
 	#undef min
 	#undef max

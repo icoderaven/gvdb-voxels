@@ -869,35 +869,6 @@ void VolumeGVDB::FindUniqueBrick(int pNumPnts, int pLevDepth, int& pNumUniqueBri
 	POP_CTX
 }
 
-static const int NUM_SMS = 16;
-static const int NUM_THREADS_PER_SM = 192;
-static const int NUM_THREADS_PER_BLOCK = 64;
-//static const int NUM_THREADS = NUM_THREADS_PER_SM * NUM_SMS;
-static const int NUM_BLOCKS = (NUM_THREADS_PER_SM / NUM_THREADS_PER_BLOCK) * NUM_SMS;
-static const int RADIX = 8;                                                        // Number of bits per radix sort pass
-static const int RADICES = 1 << RADIX;                                             // Number of radices
-static const int RADIXMASK = RADICES - 1;                                          // Mask for each radix sort pass
-static const int RADIXBITS = 64;                                                   // Number of bits to sort over
-static const int RADIXTHREADS = 16;                                                // Number of threads sharing each radix counter
-static const int RADIXGROUPS = NUM_THREADS_PER_BLOCK / RADIXTHREADS;               // Number of radix groups per CTA
-static const int TOTALRADIXGROUPS = NUM_BLOCKS * RADIXGROUPS;                      // Number of radix groups for each radix
-static const int SORTRADIXGROUPS = TOTALRADIXGROUPS * RADICES;                     // Total radix count
-static const int GRFELEMENTS = (NUM_THREADS_PER_BLOCK / RADIXTHREADS) * RADICES; 
-static const int GRFSIZE = GRFELEMENTS * sizeof(uint); 
-
-// Prefix sum variables
-static const int PREFIX_NUM_THREADS_PER_SM = NUM_THREADS_PER_SM;
-static const int PREFIX_NUM_THREADS_PER_BLOCK = PREFIX_NUM_THREADS_PER_SM;
-static const int PREFIX_NUM_BLOCKS = (PREFIX_NUM_THREADS_PER_SM / PREFIX_NUM_THREADS_PER_BLOCK) * NUM_SMS;
-static const int PREFIX_BLOCKSIZE = SORTRADIXGROUPS / PREFIX_NUM_BLOCKS;
-static const int PREFIX_GRFELEMENTS = PREFIX_BLOCKSIZE + 2 * PREFIX_NUM_THREADS_PER_BLOCK;
-static const int PREFIX_GRFSIZE = PREFIX_GRFELEMENTS * sizeof(uint);
-
-// Shuffle variables
-static const int SHUFFLE_GRFOFFSET = RADIXGROUPS * RADICES;
-static const int SHUFFLE_GRFELEMENTS = SHUFFLE_GRFOFFSET + PREFIX_NUM_BLOCKS; 
-static const int SHUFFLE_GRFSIZE = SHUFFLE_GRFELEMENTS * sizeof(uint); 
-
 void VolumeGVDB::RadixSortByByte(int pNumPnts, int pLevDepth)
 {
 	PUSH_CTX
@@ -1042,8 +1013,7 @@ void VolumeGVDB::ActivateIncreBricksGPU(int pNumPnts, float pRadius, Vector3DF p
 	
 	int threads = 512;		
 	int pblks = int(pNumPnts / threads)+1;
-
-	PrepareAux ( AUX_BRICK_LEVXYZ, pNumPnts * pRootLev * 4 * 8 / Incre_ratio, sizeof(unsigned short), true );
+	PrepareAux ( AUX_BRICK_LEVXYZ, pNumPnts * pRootLev * 10 * 4 , sizeof(unsigned short), true );
 	PrepareAux ( AUX_EXTRA_BRICK_CNT, 1, sizeof(int), true, true);
 
 	void* argsCalcExtraLevXYZ[12] = { &cuVDBInfo, &pRadius,
@@ -2536,7 +2506,6 @@ void VolumeGVDB::AddChannel ( uchar chan, int dt, int apron, int filter, int bor
 		else				axiscnt = mPool->getAtlas(0).subdim;
 	}
 	mApron = apron;
-
 	mPool->AtlasCreate ( chan, dt, getRes3DI(0), axiscnt, apron, sizeof(AtlasNode), false, mbUseGLAtlas, use_tex_mem, init_val );
 	mPool->AtlasSetFilter ( chan, filter, border );
 	SetupAtlasAccess ();	

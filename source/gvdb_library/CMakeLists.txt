@@ -300,6 +300,9 @@ target_compile_definitions(gvdb
 target_link_libraries(gvdb PRIVATE ${GLEW_LIBRARY})
 target_include_directories(gvdb PRIVATE ${GLEW_INCLUDE_DIR})
 
+# Ensure that gvdbPTX is built when gvdb is built
+add_dependencies(gvdb gvdbPTX)
+
 # # Allow GVDB to use e.g. CUDA_GVDB_COPYDATA as a macro for "cuda_gvdb_copydata.ptx"
 # foreach(_FILE ${GVDB_PTX_SOURCE_FILES})
 # 	get_filename_component(_FILE ${_FILE} NAME) # cuda_gvdb_copydata.cu

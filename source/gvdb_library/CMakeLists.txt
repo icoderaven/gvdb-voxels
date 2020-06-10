@@ -152,15 +152,15 @@ elseif(UNIX)
 endif()
 
 # Set optional depth buffer test
-OPTION(SKIP_DEPTH_BUFFER_TEST "Skip depth buffer test in raycast" OFF)
-if(SKIP_DEPTH_BUFFER_TEST)
+OPTION(GVDB_SKIP_DEPTH_BUFFER_TEST "Skip depth buffer test in raycast" OFF)
+if(GVDB_SKIP_DEPTH_BUFFER_TEST)
   message( STATUS "Skipping depth buffer test in raycast")
   target_compile_definitions(gvdbPTX PUBLIC GVDB_SKIP_DEPTH_BUFFER_TEST)
 endif()
 
 # Set option to use a depth image instead of z buffer for depth test
-OPTION(USE_DEPTH_IMAGE_BUFFER "Use direct depth in depth buffer raycast" OFF)
-if(USE_DEPTH_IMAGE_BUFFER)
+OPTION(GVDB_USE_DEPTH_IMAGE_BUFFER "Use direct depth in depth buffer raycast" OFF)
+if(GVDB_USE_DEPTH_IMAGE_BUFFER)
   message( STATUS "Using depth image as buffer")
   target_compile_definitions(gvdbPTX PUBLIC GVDB_USE_DEPTH_IMAGE_BUFFER)
 endif()
@@ -296,11 +296,8 @@ target_compile_definitions(gvdb
     PRIVATE BUILD_OPENGL
             GVDB_EXPORTS)
 
-# GVDB currently compiles with GLEW using the static version -
-# that is, by directly including glew.c and its header files.
-# We also need to define GLEW_STATIC.
-target_compile_definitions(gvdb PUBLIC GLEW_STATIC)
-target_sources(gvdb PRIVATE ${GLEW_SOURCE})
+# Link to GLEW install found earlier.
+target_link_libraries(gvdb PRIVATE ${GLEW_LIBRARY})
 target_include_directories(gvdb PRIVATE ${GLEW_INCLUDE_DIR})
 
 # # Allow GVDB to use e.g. CUDA_GVDB_COPYDATA as a macro for "cuda_gvdb_copydata.ptx"
@@ -348,23 +345,21 @@ add_custom_command(OUTPUT copiedShaders.stamp
 # export(PACKAGE gvdb)
 # export(PACKAGE gvdbPTX)
 
-# Install target
-# Install near source tree - not in the default directory unless CMAKE_INSTALL_PREFIX
-# has been set by the user!
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    get_filename_component(_INSTALLPATH "${CMAKE_CURRENT_SOURCE_DIR}/../../_output" REALPATH)
-    # Forcing is only OK here because we've checked for CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT.
-    set(CMAKE_INSTALL_PREFIX ${_INSTALLPATH} CACHE PATH "Default install path for GVDB" FORCE)
+# Install target only if the parent CMakeLists is being used directly
+if(INSTALL_CONFIG)
+    # # Install near source tree - not in the default directory unless CMAKE_INSTALL_PREFIX
+    # # has been set by the user!
+    # if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    #     get_filename_component(_INSTALLPATH "${CMAKE_CURRENT_SOURCE_DIR}/../../_output" REALPATH)
+    #     # Forcing is only OK here because we've checked for CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT.
+    #     set(CMAKE_INSTALL_PREFIX ${_INSTALLPATH} CACHE PATH "Default install path for GVDB" FORCE)
+    # endif()
+
+    # Compute binary, include, and library install paths.
+    install(DIRECTORY "$<TARGET_FILE_DIR:gvdb>/" DESTINATION lib FILES_MATCHING PATTERN "*.dll" PATTERN "*.glsl" PATTERN "*.ptx" PATTERN "*.so")
+    install(DIRECTORY "$<TARGET_FILE_DIR:gvdb>/" DESTINATION lib FILES_MATCHING PATTERN "*.lib" PATTERN "*.exp" PATTERN "*.ilk" PATTERN "*.pdb")
+    get_target_property(TEMP_INTERFACE_SOURCES gvdb INTERFACE_SOURCES)
+    install(FILES ${TEMP_INTERFACE_SOURCES} DESTINATION include)
+    get_target_property(TEMP_INTERFACE_SOURCES gvdbPTX INTERFACE_SOURCES)
+    install(FILES ${TEMP_INTERFACE_SOURCES} DESTINATION include)
 endif()
-
-# Compute binary, include, and library install paths.
-get_filename_component(BIN_INSTALL_PATH ${CMAKE_INSTALL_PREFIX}/bin REALPATH)
-get_filename_component(INCLUDE_INSTALL_PATH ${CMAKE_INSTALL_PREFIX}/include REALPATH)
-get_filename_component(LIB_INSTALL_PATH ${CMAKE_INSTALL_PREFIX}/lib REALPATH)
-
-install(DIRECTORY "$<TARGET_FILE_DIR:gvdb>/" DESTINATION ${BIN_INSTALL_PATH} FILES_MATCHING PATTERN "*.dll" PATTERN "*.glsl" PATTERN "*.ptx" PATTERN "*.so")
-install(DIRECTORY "$<TARGET_FILE_DIR:gvdb>/" DESTINATION ${LIB_INSTALL_PATH} FILES_MATCHING PATTERN "*.lib" PATTERN "*.exp" PATTERN "*.ilk" PATTERN "*.pdb")
-get_target_property(TEMP_INTERFACE_SOURCES gvdb INTERFACE_SOURCES)
-install(FILES ${TEMP_INTERFACE_SOURCES} DESTINATION ${INCLUDE_INSTALL_PATH})
-get_target_property(TEMP_INTERFACE_SOURCES gvdbPTX INTERFACE_SOURCES)
-install(FILES ${TEMP_INTERFACE_SOURCES} DESTINATION ${INCLUDE_INSTALL_PATH})

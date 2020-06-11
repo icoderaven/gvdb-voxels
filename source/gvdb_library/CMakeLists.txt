@@ -7,7 +7,9 @@ cmake_minimum_required(VERSION 3.10) # Use Modern CMake
 #     gvdb        gvdbPTX
 # (builds lib)  (builds PTX)
 
-project(gvdb LANGUAGES CUDA CXX C)
+project(gvdb 
+VERSION 1.1.1
+LANGUAGES CUDA CXX C)
 
 cmake_policy(SET CMP0072 NEW) # Prefer GLVND by default when available (CMake 3.11+)
 find_package(OpenGL REQUIRED)
@@ -35,6 +37,8 @@ endif()
 # Creates an object library target named gvdbPTX.
 set(GVDB_PTX_SOURCE_FILES "kernels/cuda_gvdb_copydata.cu" "kernels/cuda_gvdb_module.cu")
 add_library(gvdbPTX OBJECT ${GVDB_PTX_SOURCE_FILES})
+# add alias to match exported target when calling using add_subdirectory()
+add_library(gvdb::gvdbPTX ALIAS gvdbPTX)
 # Make sure it compiles to a PTX file.
 set_target_properties(gvdbPTX PROPERTIES CUDA_PTX_COMPILATION ON)
 # Private and public sources are compiled into the target.
@@ -75,6 +79,8 @@ target_include_directories(gvdbPTX
 file(WRITE "${CMAKE_CURRENT_LIST_DIR}/dummy.cpp" "")
 
 add_library(gvdb SHARED "${CMAKE_CURRENT_LIST_DIR}/dummy.cpp")
+# add alias to match exported target when calling using add_subdirectory()
+add_library(gvdb::gvdb ALIAS gvdb)
 
 set(KERNELS_SOURCE_FILES "cuda_gvdb_copydata.cu" "cuda_gvdb_module.cu")
 message("kernel files found are ${KERNELS_SOURCE_FILES}")
@@ -112,31 +118,13 @@ target_sources(gvdb
             src/loader_ObjarReader.cpp
             src/loader_OBJReader.cpp
             src/loader_Parser.cpp
-            src/string_helper.cpp
-    PUBLIC  "${CMAKE_CURRENT_LIST_DIR}/src/app_perf.h"
-            "${CMAKE_CURRENT_LIST_DIR}/src/gvdb.h"
-            "${CMAKE_CURRENT_LIST_DIR}/src/gvdb_allocator.h"
-            "${CMAKE_CURRENT_LIST_DIR}/src/gvdb_camera.h"
-            "${CMAKE_CURRENT_LIST_DIR}/src/gvdb_cutils.cuh"
-            "${CMAKE_CURRENT_LIST_DIR}/src/gvdb_model.h"
-            "${CMAKE_CURRENT_LIST_DIR}/src/gvdb_node.h"
-            "${CMAKE_CURRENT_LIST_DIR}/src/gvdb_render.h"
-            "${CMAKE_CURRENT_LIST_DIR}/src/gvdb_scene.h"
-            "${CMAKE_CURRENT_LIST_DIR}/src/gvdb_types.h"
-            "${CMAKE_CURRENT_LIST_DIR}/src/gvdb_vec.h"
-            "${CMAKE_CURRENT_LIST_DIR}/src/gvdb_volume_3D.h"
-            "${CMAKE_CURRENT_LIST_DIR}/src/gvdb_volume_base.h"
-            "${CMAKE_CURRENT_LIST_DIR}/src/gvdb_volume_gvdb.h"
-            "${CMAKE_CURRENT_LIST_DIR}/src/loader_ObjarReader.h"
-            "${CMAKE_CURRENT_LIST_DIR}/src/loader_OBJReader.h"
-            "${CMAKE_CURRENT_LIST_DIR}/src/loader_Parser.h"
-            "${CMAKE_CURRENT_LIST_DIR}/src/string_helper.h")
+            src/string_helper.cpp)
 
 # Export our additional target include directories.
 target_include_directories(gvdb
     PUBLIC      ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}
-    INTERFACE   $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/src>
-                $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/kernels>
+    PUBLIC      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
+                $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/kernels>
                 $<INSTALL_INTERFACE:include>)
 
 # Make sure to link against CUDA and OpenGL
@@ -348,21 +336,35 @@ add_custom_command(OUTPUT copiedShaders.stamp
 # export(PACKAGE gvdb)
 # export(PACKAGE gvdbPTX)
 
-# Install target only if the parent CMakeLists is being used directly
-if(INSTALL_CONFIG)
-    # # Install near source tree - not in the default directory unless CMAKE_INSTALL_PREFIX
-    # # has been set by the user!
-    # if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    #     get_filename_component(_INSTALLPATH "${CMAKE_CURRENT_SOURCE_DIR}/../../_output" REALPATH)
-    #     # Forcing is only OK here because we've checked for CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT.
-    #     set(CMAKE_INSTALL_PREFIX ${_INSTALLPATH} CACHE PATH "Default install path for GVDB" FORCE)
-    # endif()
 
-    # Compute binary, include, and library install paths.
-    install(DIRECTORY "$<TARGET_FILE_DIR:gvdb>/" DESTINATION lib FILES_MATCHING PATTERN "*.dll" PATTERN "*.glsl" PATTERN "*.ptx" PATTERN "*.so")
-    install(DIRECTORY "$<TARGET_FILE_DIR:gvdb>/" DESTINATION lib FILES_MATCHING PATTERN "*.lib" PATTERN "*.exp" PATTERN "*.ilk" PATTERN "*.pdb")
-    get_target_property(TEMP_INTERFACE_SOURCES gvdb INTERFACE_SOURCES)
-    install(FILES ${TEMP_INTERFACE_SOURCES} DESTINATION include)
-    get_target_property(TEMP_INTERFACE_SOURCES gvdbPTX INTERFACE_SOURCES)
-    install(FILES ${TEMP_INTERFACE_SOURCES} DESTINATION include)
-endif()
+# Compute binary, include, and library install paths.
+install(DIRECTORY "$<TARGET_FILE_DIR:gvdb>/" DESTINATION lib FILES_MATCHING PATTERN "*.dll" PATTERN "*.glsl" PATTERN "*.ptx" PATTERN "*.so")
+install(DIRECTORY "$<TARGET_FILE_DIR:gvdb>/" DESTINATION lib FILES_MATCHING PATTERN "*.lib" PATTERN "*.exp" PATTERN "*.ilk" PATTERN "*.pdb")
+
+install(DIRECTORY "${PROJECT_SOURCE_DIR}/src/" DESTINATION include FILES_MATCHING PATTERN "*.h" PATTERN "*.cuh")
+install(DIRECTORY "${PROJECT_SOURCE_DIR}/kerneles/" DESTINATION include FILES_MATCHING PATTERN "*.cuh")
+
+# cmake packaging
+include(CMakePackageConfigHelpers)
+set(GVDB_CMAKECONFIG_INSTALL_DIR
+    "share/cmake/gvdb"
+    CACHE STRING "install path for gvdb-config.cmake")
+
+write_basic_package_version_file(
+  "gvdb-config-version.cmake"
+  VERSION ${PACKAGE_VERSION}
+  COMPATIBILITY AnyNewerVersion)
+
+# Generate export targets file
+install(TARGETS gvdb EXPORT "${GVDB_EXPORT_NAME}")
+
+install(
+  EXPORT "${GVDB_EXPORT_NAME}"
+  NAMESPACE "gvdb::"
+  DESTINATION ${GVDB_CMAKECONFIG_INSTALL_DIR})
+
+# This isn't sufficient, since dependencies also need our dependencies
+# (libcuckoo) This is provided in cmake/gvdb-config.cmmake.
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/gvdb-config.cmake
+              ${CMAKE_CURRENT_BINARY_DIR}/gvdb-config-version.cmake
+        DESTINATION ${GVDB_CMAKECONFIG_INSTALL_DIR})

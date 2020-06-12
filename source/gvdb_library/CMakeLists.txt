@@ -95,8 +95,7 @@ foreach(_FILE ${KERNELS_SOURCE_FILES})
                     _MACRO
                     ${_FILE_UPPER})
     target_compile_definitions(gvdb
-        PUBLIC $<BUILD_INTERFACE:${_MACRO}="$<TARGET_FILE_DIR:gvdb>/${_FILE_PTX}">
-                $<INSTALL_INTERFACE:${_MACRO}=${CMAKE_INSTALL_PREFIX}/lib/${_FILE_PTX}>
+        PRIVATE ${_MACRO}="${CMAKE_INSTALL_PREFIX}/lib/${_FILE_PTX}"
     )
 endforeach(_FILE)
 
@@ -325,13 +324,11 @@ add_custom_target(gvdbCopy DEPENDS ${_GVDB_COPY_STAMP_FILES})
 # Copy the PTX files to the library directory (this is where the dependency on gvdbPTX is introduced)
 add_custom_command(OUTPUT copiedPTX.stamp
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_INSTALL_PREFIX}/lib/
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_OBJECTS:gvdbPTX> $<TARGET_FILE_DIR:gvdb>
     COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_OBJECTS:gvdbPTX> ${CMAKE_INSTALL_PREFIX}/lib/
     COMMAND ${CMAKE_COMMAND} -E touch copiedPTX.stamp
     DEPENDS gvdbPTX COMMAND_EXPAND_LISTS)
 # Finally, copy the shaders to the library directory
 add_custom_command(OUTPUT copiedShaders.stamp
-    COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_LIST_DIR}/shaders" $<TARGET_FILE_DIR:gvdb>
     COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_LIST_DIR}/shaders" ${CMAKE_INSTALL_PREFIX}/lib/
     COMMAND ${CMAKE_COMMAND} -E touch copiedShaders.stamp)
 # We can then tell CMake that our libraries were built in this folder, so that

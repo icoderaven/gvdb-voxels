@@ -357,7 +357,7 @@ write_basic_package_version_file(
   COMPATIBILITY AnyNewerVersion)
 
 # Generate export targets file
-install(TARGETS gvdb EXPORT "${GVDB_EXPORT_NAME}")
+install(TARGETS gvdb EXPORT "${GVDB_EXPORT_NAME}" LIBRARY DESTINATION lib)
 
 if(GVDB_MASTER_PROJECT)
 install(

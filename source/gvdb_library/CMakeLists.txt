@@ -358,13 +358,13 @@ write_basic_package_version_file(
 # Generate export targets file
 install(TARGETS gvdb EXPORT "${GVDB_EXPORT_NAME}")
 
+if(GVDB_MASTER_PROJECT)
 install(
   EXPORT "${GVDB_EXPORT_NAME}"
   NAMESPACE "gvdb::"
   DESTINATION ${GVDB_CMAKECONFIG_INSTALL_DIR})
 
-# This isn't sufficient, since dependencies also need our dependencies
-# (libcuckoo) This is provided in cmake/gvdb-config.cmmake.
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/gvdb-config.cmake
-              ${CMAKE_CURRENT_BINARY_DIR}/gvdb-config-version.cmake
-        DESTINATION ${GVDB_CMAKECONFIG_INSTALL_DIR})
+  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/gvdb-config.cmake
+            ${CMAKE_CURRENT_BINARY_DIR}/gvdb-config-version.cmake
+            DESTINATION ${GVDB_CMAKECONFIG_INSTALL_DIR})
+endif()

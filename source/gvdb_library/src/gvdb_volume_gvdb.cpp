@@ -5353,8 +5353,7 @@ void VolumeGVDB::InsertPoints ( int num_pnts, Vector3DF trans, bool bPrefix )
 
 		PERF_PUSH ( "  Sort points");
 		PrepareAux ( AUX_PNTSORT, num_pnts, sizeof(Vector3DF), false );
-  	    void* args[13] = { &cuVDBInfo, &num_pnts, &mAux[AUX_PNTPOS].gpu, &mAux[AUX_PNTPOS].subdim.x, &mAux[AUX_PNTPOS].stride, &mAux[AUX_PNODE].gpu, &mAux[AUX_PNDX].gpu, 
-									&bricks, &mAux[AUX_GRIDCNT].gpu, &mAux[AUX_GRIDOFF].gpu, &mAux[AUX_PNTSORT].gpu, &trans.x  };
+		void* args[11] = { &num_pnts, &mAux[AUX_PNTPOS].gpu, &mAux[AUX_PNTPOS].subdim.x, &mAux[AUX_PNTPOS].stride, &mAux[AUX_PNODE].gpu, &mAux[AUX_PNDX].gpu, &bricks, &mAux[AUX_GRIDCNT].gpu, &mAux[AUX_GRIDOFF].gpu, &mAux[AUX_PNTSORT].gpu, &trans.x  };
 				
 		cudaCheck ( cuLaunchKernel ( cuFunc[FUNC_SORT_POINTS], pblks, 1, 1, threads, 1, 1, 0, NULL, args, NULL ), 
 						"VolumeGVDB", "InsertPoints", "cuLaunch", "FUNC_SORT_POINTS", mbDebug);			

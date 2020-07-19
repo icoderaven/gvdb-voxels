@@ -39,7 +39,7 @@ extern "C" __global__ void gvdbInsertPoints ( VDBInfo* gvdb, int num_pnts, char*
 
 	float3 wpos = (*(float3*) (ppos + i*pos_stride + pos_off)); // NOTE: +ptrans is below. Allows check for wpos.z==NOHIT 
 
-	if ( wpos.z == NOHIT ) { pnode[i] = ID_UNDEFL; return; }		// If position invalid, return. 
+	if ( wpos.x<0 || wpos.y <0 || wpos.z <0 || wpos.z == NOHIT ) { pnode[i] = ID_UNDEFL; return; }		// If position invalid, return. 
 	float3 offs, vmin, vdel;										// Get GVDB node at the particle point
 	uint64 nid;
 	VDBNode* node = getNodeAtPoint ( gvdb, wpos + ptrans, &offs, &vmin, &vdel, &nid );
